@@ -1,0 +1,54 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: blog-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: solar_auth
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-change_me_0216}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  backend:
+    build: ./backend
+    container_name: blog-api
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      PORT: 3000
+      FRONTEND_ORIGIN: http://localhost
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USER: postgres
+      DB_PASSWORD: ${DB_PASSWORD:-change_me_0216}
+      DB_NAME: solar_auth
+      DB_SYNC: "true"
+      JWT_SECRET: ${JWT_SECRET:-change_me_jwt_secret_2026}
+      JWT_EXPIRES_IN: 24h
+    volumes:
+      - uploads:/app/uploads
+
+  frontend:
+    build: ./frontend
+    container_name: blog-web
+    restart: unless-stopped
+    depends_on:
+      - backend
+    ports:
+      - "80:80"
+
+volumes:
+  pgdata:
+  uploads:
