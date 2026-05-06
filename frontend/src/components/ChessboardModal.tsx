@@ -178,7 +178,7 @@ export function ChessboardModal({ open, onClose }: ChessboardModalProps) {
       await fetchMessages()
     } catch {
       // fallback: show locally
-      setMessages((prev) => [{ id: Date.now().toString(), username: '我', content, createdAt: new Date().toISOString() }, ...prev])
+      setMessages((prev) => [{ id: Date.now().toString(), username: '我', content, parentId: null, createdAt: new Date().toISOString() }, ...prev])
       setMsgInput('')
     } finally {
       setSending(false)
