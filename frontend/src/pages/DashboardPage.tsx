@@ -438,18 +438,18 @@ export function DashboardPage() {
             <div className="viz-card">
               <h3>🖼️ 图片管理</h3>
               <div className="flex flex-wrap gap-1.5 mb-2">
-                <input className="flex-1 min-w-[80px] h-8 rounded-lg border border-white/10 bg-white/5 px-2.5 text-xs text-white placeholder-slate-500 outline-none focus:border-sky-400/50" placeholder="标题" value={imgForm.title} onChange={e => setImgForm(p => ({ ...p, title: e.target.value }))} />
-                <input type="file" accept="image/*" onChange={e => setImgFile(e.target.files?.[0] ?? null)} className="flex-1 min-w-[100px] h-8 rounded-lg border border-white/10 bg-white/5 px-2 text-xs text-slate-300 file:mr-2 file:rounded file:border-0 file:bg-sky-500/20 file:px-2 file:py-0.5 file:text-xs file:text-sky-200" />
+                <input className="flex-1 min-w-[80px] h-8 rounded-lg border border-slate-400 bg-white/90 px-2.5 text-xs text-slate-900 placeholder-slate-400 outline-none focus:border-sky-500 focus:bg-white" placeholder="标题" value={imgForm.title} onChange={e => setImgForm(p => ({ ...p, title: e.target.value }))} />
+                <input type="file" accept="image/*" onChange={e => setImgFile(e.target.files?.[0] ?? null)} className="flex-1 min-w-[100px] h-8 rounded-lg border border-slate-400 bg-white/90 px-2 text-xs text-slate-700 file:mr-2 file:rounded file:border-0 file:bg-sky-500/20 file:px-2 file:py-0.5 file:text-xs file:text-sky-200" />
                 <button className="h-8 rounded-lg bg-gradient-to-r from-sky-500 to-indigo-500 px-3 text-xs font-medium text-white hover:from-sky-400 hover:to-indigo-400" onClick={handleSaveImage}>{editingImgId ? '更新' : '添加'}</button>
-                {editingImgId && <button className="h-8 rounded-lg border border-white/20 bg-white/5 px-3 text-xs text-slate-300 hover:bg-white/10" onClick={() => { setEditingImgId(null); setImgFile(null); setImgForm({ title: '', sortOrder: 0 }) }}>取消</button>}
+                {editingImgId && <button className="h-8 rounded-lg border border-slate-300 bg-white/70 px-3 text-xs text-slate-700 hover:bg-white hover:border-slate-400" onClick={() => { setEditingImgId(null); setImgFile(null); setImgForm({ title: '', sortOrder: 0 }) }}>取消</button>}
               </div>
               <div className="max-h-[160px] overflow-y-auto space-y-1.5 custom-scrollbar">
                 {adminImages.map(img => (
-                  <div key={img.id} className="flex items-center gap-2 rounded-lg border border-white/10 bg-white/5 px-3 py-2">
+                  <div key={img.id} className="flex items-center gap-2 rounded-lg border border-slate-300 bg-white/70 px-3 py-2">
                     <img src={img.fileUrl} alt={img.title} className="h-8 w-8 shrink-0 rounded object-cover" />
-                    <span className="flex-1 truncate text-xs text-slate-300">{img.title}</span>
-                    <button className="text-[10px] text-sky-400 hover:text-sky-300" onClick={() => { setImgForm({ title: img.title, sortOrder: img.sortOrder }); setEditingImgId(img.id) }}>编辑</button>
-                    <button className="text-[10px] text-red-400 hover:text-red-300" onClick={() => { if (window.confirm('删除？')) mediaApi.deleteImage(img.id).then(fetchMedia) }}>删除</button>
+                    <span className="flex-1 truncate text-xs text-slate-700">{img.title}</span>
+                    <button className="text-[10px] text-sky-600 hover:text-sky-500" onClick={() => { setImgForm({ title: img.title, sortOrder: img.sortOrder }); setEditingImgId(img.id) }}>编辑</button>
+                    <button className="text-[10px] text-red-600 hover:text-red-500" onClick={() => { if (window.confirm('删除？')) mediaApi.deleteImage(img.id).then(fetchMedia) }}>删除</button>
                   </div>
                 ))}
                 {adminImages.length === 0 && <p className="py-3 text-center text-xs text-slate-500">暂无图片</p>}
@@ -459,20 +459,20 @@ export function DashboardPage() {
             <div className="viz-card">
               <h3>🎬 视频管理</h3>
               <div className="flex flex-wrap gap-1.5 mb-2">
-                <input className="flex-1 min-w-[80px] h-8 rounded-lg border border-white/10 bg-white/5 px-2.5 text-xs text-white placeholder-slate-500 outline-none focus:border-sky-400/50" placeholder="标题" value={vidForm.title} onChange={e => setVidForm(p => ({ ...p, title: e.target.value }))} />
-                <input type="file" accept="video/*" onChange={e => setVidFile(e.target.files?.[0] ?? null)} className="flex-1 min-w-[100px] h-8 rounded-lg border border-white/10 bg-white/5 px-2 text-xs text-slate-300 file:mr-2 file:rounded file:border-0 file:bg-sky-500/20 file:px-2 file:py-0.5 file:text-xs file:text-sky-200" />
-                <input className="w-16 h-8 rounded-lg border border-white/10 bg-white/5 px-2 text-xs text-white placeholder-slate-500 outline-none focus:border-sky-400/50" placeholder="时长" value={vidForm.duration} onChange={e => setVidForm(p => ({ ...p, duration: e.target.value }))} />
+                <input className="flex-1 min-w-[80px] h-8 rounded-lg border border-slate-400 bg-white/90 px-2.5 text-xs text-slate-900 placeholder-slate-400 outline-none focus:border-sky-500 focus:bg-white" placeholder="标题" value={vidForm.title} onChange={e => setVidForm(p => ({ ...p, title: e.target.value }))} />
+                <input type="file" accept="video/*" onChange={e => setVidFile(e.target.files?.[0] ?? null)} className="flex-1 min-w-[100px] h-8 rounded-lg border border-slate-400 bg-white/90 px-2 text-xs text-slate-700 file:mr-2 file:rounded file:border-0 file:bg-sky-500/20 file:px-2 file:py-0.5 file:text-xs file:text-sky-200" />
+                <input className="w-16 h-8 rounded-lg border border-slate-400 bg-white/90 px-2 text-xs text-slate-900 placeholder-slate-400 outline-none focus:border-sky-500 focus:bg-white" placeholder="时长" value={vidForm.duration} onChange={e => setVidForm(p => ({ ...p, duration: e.target.value }))} />
                 <button className="h-8 rounded-lg bg-gradient-to-r from-sky-500 to-indigo-500 px-3 text-xs font-medium text-white hover:from-sky-400 hover:to-indigo-400" onClick={handleSaveVideo}>{editingVidId ? '更新' : '添加'}</button>
-                {editingVidId && <button className="h-8 rounded-lg border border-white/20 bg-white/5 px-3 text-xs text-slate-300 hover:bg-white/10" onClick={() => { setEditingVidId(null); setVidFile(null); setVidForm({ title: '', description: '', duration: '', sortOrder: 0 }) }}>取消</button>}
+                {editingVidId && <button className="h-8 rounded-lg border border-slate-300 bg-white/70 px-3 text-xs text-slate-700 hover:bg-white hover:border-slate-400" onClick={() => { setEditingVidId(null); setVidFile(null); setVidForm({ title: '', description: '', duration: '', sortOrder: 0 }) }}>取消</button>}
               </div>
               <div className="max-h-[160px] overflow-y-auto space-y-1.5 custom-scrollbar">
                 {adminVideos.map(vid => (
-                  <div key={vid.id} className="flex items-center gap-2 rounded-lg border border-white/10 bg-white/5 px-3 py-2">
-                    <span className="text-xs shrink-0">▶</span>
-                    <span className="flex-1 truncate text-xs text-slate-300">{vid.title}</span>
+                  <div key={vid.id} className="flex items-center gap-2 rounded-lg border border-slate-300 bg-white/70 px-3 py-2">
+                    <span className="text-xs shrink-0 text-slate-700">▶</span>
+                    <span className="flex-1 truncate text-xs text-slate-700">{vid.title}</span>
                     {vid.duration && <span className="text-[10px] text-slate-500 shrink-0">{vid.duration}</span>}
-                    <button className="text-[10px] text-sky-400 hover:text-sky-300" onClick={() => { setVidForm({ title: vid.title, description: vid.description ?? '', duration: vid.duration ?? '', sortOrder: vid.sortOrder }); setEditingVidId(vid.id) }}>编辑</button>
-                    <button className="text-[10px] text-red-400 hover:text-red-300" onClick={() => { if (window.confirm('删除？')) mediaApi.deleteVideo(vid.id).then(fetchMedia) }}>删除</button>
+                    <button className="text-[10px] text-sky-600 hover:text-sky-500" onClick={() => { setVidForm({ title: vid.title, description: vid.description ?? '', duration: vid.duration ?? '', sortOrder: vid.sortOrder }); setEditingVidId(vid.id) }}>编辑</button>
+                    <button className="text-[10px] text-red-600 hover:text-red-500" onClick={() => { if (window.confirm('删除？')) mediaApi.deleteVideo(vid.id).then(fetchMedia) }}>删除</button>
                   </div>
                 ))}
                 {adminVideos.length === 0 && <p className="py-3 text-center text-xs text-slate-500">暂无视频</p>}
@@ -482,20 +482,20 @@ export function DashboardPage() {
             <div className="viz-card">
               <h3>🔔 通知管理</h3>
               <div className="flex flex-wrap gap-1.5 mb-2">
-                <select value={notiForm.type} onChange={e => setNotiForm(p => ({ ...p, type: e.target.value }))} className="w-[70px] h-8 rounded-lg border border-white/10 bg-white/5 px-2 text-xs text-slate-300 outline-none focus:border-sky-400/50">
+                <select value={notiForm.type} onChange={e => setNotiForm(p => ({ ...p, type: e.target.value }))} className="w-[70px] h-8 rounded-lg border border-slate-400 bg-white/90 px-2 text-xs text-slate-700 outline-none focus:border-sky-500">
                   <option>系统</option><option>互动</option><option>提醒</option><option>消息</option>
                 </select>
-                <input className="flex-[2] min-w-[140px] h-8 rounded-lg border border-white/10 bg-white/5 px-2.5 text-xs text-white placeholder-slate-500 outline-none focus:border-sky-400/50" placeholder="通知内容" value={notiForm.content} onChange={e => setNotiForm(p => ({ ...p, content: e.target.value }))} />
+                <input className="flex-[2] min-w-[140px] h-8 rounded-lg border border-slate-400 bg-white/90 px-2.5 text-xs text-slate-900 placeholder-slate-400 outline-none focus:border-sky-500 focus:bg-white" placeholder="通知内容" value={notiForm.content} onChange={e => setNotiForm(p => ({ ...p, content: e.target.value }))} />
                 <button className="h-8 rounded-lg bg-gradient-to-r from-sky-500 to-indigo-500 px-3 text-xs font-medium text-white hover:from-sky-400 hover:to-indigo-400" onClick={handleAddNotification}>发送</button>
               </div>
               <div className="max-h-[180px] overflow-y-auto space-y-1.5 custom-scrollbar">
                 {notifications.map(item => {
-                  const typeColors: Record<string, string> = { '系统': 'bg-red-500/15 text-red-300', '互动': 'bg-sky-500/15 text-sky-300', '提醒': 'bg-amber-500/15 text-amber-300', '消息': 'bg-emerald-500/15 text-emerald-300' }
+                  const typeColors: Record<string, string> = { '系统': 'bg-red-100 text-red-700', '互动': 'bg-sky-100 text-sky-700', '提醒': 'bg-amber-100 text-amber-700', '消息': 'bg-emerald-100 text-emerald-700' }
                   return (
-                    <div key={item.id} className="flex items-center gap-2 rounded-lg border border-white/10 bg-white/5 px-3 py-2">
-                      <span className={`shrink-0 rounded-full px-2 py-0.5 text-[10px] font-medium ${typeColors[item.type] ?? 'bg-slate-500/15 text-slate-300'}`}>{item.type}</span>
-                      <span className="flex-1 truncate text-xs text-slate-300">{item.content}</span>
-                      <button className="text-[10px] text-red-400 hover:text-red-300" onClick={() => { if (window.confirm('删除？')) handleDeleteNotification(item.id) }}>删除</button>
+                    <div key={item.id} className="flex items-center gap-2 rounded-lg border border-slate-300 bg-white/70 px-3 py-2">
+                      <span className={`shrink-0 rounded-full px-2 py-0.5 text-[10px] font-medium ${typeColors[item.type] ?? 'bg-slate-100 text-slate-600'}`}>{item.type}</span>
+                      <span className="flex-1 truncate text-xs text-slate-700">{item.content}</span>
+                      <button className="text-[10px] text-red-600 hover:text-red-500" onClick={() => { if (window.confirm('删除？')) handleDeleteNotification(item.id) }}>删除</button>
                     </div>
                   )
                 })}

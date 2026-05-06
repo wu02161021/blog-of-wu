@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Query, Req } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Query, Req } from '@nestjs/common';
 import { MessagesService } from './messages.service';
 import { CreateMessageDto } from './dto/create-message.dto';
 import type { Request } from 'express';
@@ -10,6 +10,11 @@ export class MessagesController {
   @Get()
   findAll(@Query('page') page?: string) {
     return this.messagesService.findAll(Number(page) || 1);
+  }
+
+  @Get(':id/replies')
+  findReplies(@Param('id') id: string) {
+    return this.messagesService.findReplies(id);
   }
 
   @Post()

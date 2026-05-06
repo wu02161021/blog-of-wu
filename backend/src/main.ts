@@ -3,8 +3,6 @@ import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
 import type { NestExpressApplication } from '@nestjs/platform-express';
 import * as dotenv from 'dotenv';
-import { join } from 'path';
-import { existsSync, mkdirSync } from 'fs';
 
 dotenv.config({ path: '.env', override: true });
 
@@ -27,15 +25,6 @@ async function bootstrap() {
     next();
   });
   app.setGlobalPrefix('api');
-
-  // Serve uploaded files
-  const uploadsPath = join(process.cwd(), 'uploads');
-  const imagesPath = join(uploadsPath, 'images');
-  const videosPath = join(uploadsPath, 'videos');
-  if (!existsSync(imagesPath)) mkdirSync(imagesPath, { recursive: true });
-  if (!existsSync(videosPath)) mkdirSync(videosPath, { recursive: true });
-  const expressApp = app.getHttpAdapter().getInstance();
-  expressApp.use('/uploads', (await import('express')).static(uploadsPath));
 
   await app.listen(process.env.PORT ?? 3000);
 }

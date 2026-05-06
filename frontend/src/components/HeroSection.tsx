@@ -8,10 +8,10 @@ import { ErrorBoundary } from './ErrorBoundary'
 
 /* ── Data ── */
 export const characters = [
-  { id: 'kernel-bishop', modelPath: '/kernel-bishop-chess-piece/source/KernelBishop.glb', titleSegments: ['全栈架构', '极致性能', 'Kernel Bishop'] as [string, string, string], tags: ['React · R3F 三维引擎', 'NestJS · 微服务架构', 'PostgreSQL · 数据建模'] as [string, string, string], subtitle: '以代码为棋，布全局之局。从交互到服务端，每一层都追求极致的可维护与高性能。', bubble: '我是 Kernel Bishop，执棋布局，掌控全栈。' },
-  { id: 'corn-pawn', modelPath: '/corn-pawn-chess-piece/source/CornPawn.glb', titleSegments: ['产品体验', '丝滑动效', 'Corn Pawn'] as [string, string, string], tags: ['GSAP · 硬件加速', 'Tailwind · 治愈美学', 'Framer Motion · 微交互'] as [string, string, string], subtitle: '一兵一卒，皆是体验。用柔和而精准的动效，让每一次点击都成为享受。', bubble: '我是 Corn Pawn，守护每一个像素的温度。' },
-  { id: 'corn-bishop', modelPath: '/corn-bishop-chess-piece/source/CornBishop.glb', titleSegments: ['数据智能', '可视化洞察', 'Corn Bishop'] as [string, string, string], tags: ['TypeScript · 类型安全', 'ECharts · 数据叙事', 'WebSocket · 实时推送'] as [string, string, string], subtitle: '数据是新时代的棋盘，洞察是致胜的关键。让每一个数字都讲述它的故事。', bubble: '我是 Corn Bishop，用数据描绘世界的轮廓。' },
-  { id: 'queen', modelPath: '/queen-chess-piece/source/Queen.glb', titleSegments: ['创意设计', '视觉叙事', 'Queen'] as [string, string, string], tags: ['品牌视觉 · 统一美学', '3D 渲染 · GPU 加速', '交互设计 · 人本理念'] as [string, string, string], subtitle: '皇后之棋，万象皆美。以视觉叙事串联页面，让技术与艺术在此相遇。', bubble: '我是 Queen，执掌全局之美，定义视觉边界。' },
+  { id: 'kernel-bishop', modelPath: '/kernel-bishop-chess-piece/source/KernelBishop.glb', titleSegments: ['心有山海', '静水流深', '光而不耀'] as [string, string, string], tags: ['React · R3F 三维引擎', 'NestJS · 微服务架构', 'PostgreSQL · 数据建模'] as [string, string, string] },
+  { id: 'corn-pawn', modelPath: '/corn-pawn-chess-piece/source/CornPawn.glb', titleSegments: ['清风徐来', '水波不兴', '岁月静好'] as [string, string, string], tags: ['GSAP · 硬件加速', 'Tailwind · 治愈美学', 'Framer Motion · 微交互'] as [string, string, string] },
+  { id: 'corn-bishop', modelPath: '/corn-bishop-chess-piece/source/CornBishop.glb', titleSegments: ['行而不辍', '履践致远', '星河长明'] as [string, string, string], tags: ['TypeScript · 类型安全', 'ECharts · 数据叙事', 'WebSocket · 实时推送'] as [string, string, string] },
+  { id: 'queen', modelPath: '/queen-chess-piece/source/Queen.glb', titleSegments: ['以梦为马', '不负韶华', '人间值得'] as [string, string, string], tags: ['品牌视觉 · 统一美学', '3D 渲染 · GPU 加速', '交互设计 · 人本理念'] as [string, string, string] },
 ]
 
 /* ── Helpers ── */
@@ -48,7 +48,7 @@ const AvatarModel = memo(function AvatarModel({
   const currentIdx = useRef(activeIndex)
   const outgoingIdx = useRef<number | null>(null)
 
-  useEffect(() => { gsap.fromTo(intro.current, { p: 0 }, { p: 1, duration: 2.25, ease: 'elastic.out(1,0.55)' }) }, [])
+  useEffect(() => { gsap.fromTo(intro.current, { p: 0 }, { p: 1, duration: 1.8, ease: 'power3.out' }) }, [])
 
   useEffect(() => {
     if (activeIndex === currentIdx.current) return
@@ -67,12 +67,12 @@ const AvatarModel = memo(function AvatarModel({
     motion.current.y += (mouseRef.current.y - motion.current.y) * fs
     motion.current.s += (scrollRef.current - motion.current.s) * 0.06
 
-    const mgx = reducedMotion ? 0.14 : 0.38; const mgy = reducedMotion ? 0.08 : 0.2
-    const yf = reducedMotion ? 0.04 : 0.09
-    const sc = 0.22 + intro.current.p * 0.76 + motion.current.s * (reducedMotion ? 0.1 : 0.2) + clickBoostRef.current.model * 0.26
+    const mgx = reducedMotion ? 0.12 : 0.28; const mgy = reducedMotion ? 0.06 : 0.15
+    const yf = reducedMotion ? 0.03 : 0.06
+    const sc = 0.26 + intro.current.p * 0.72 + motion.current.s * (reducedMotion ? 0.08 : 0.16) + clickBoostRef.current.model * 0.22
     groupRef.current.scale.setScalar(sc)
-    groupRef.current.position.set(motion.current.x * mgx, -0.24 + Math.sin(t * 0.95) * yf + motion.current.y * mgy - motion.current.s * 0.3, -3.95 + intro.current.p * 2.55 + motion.current.s * 0.66)
-    groupRef.current.rotation.set(Math.sin(t * 0.6) * (reducedMotion ? 0.08 : 0.16) - motion.current.y * (reducedMotion ? 0.1 : 0.24), t * (reducedMotion ? 0.52 : 0.85) + motion.current.x * (reducedMotion ? 0.1 : 0.18), 0)
+    groupRef.current.position.set(motion.current.x * mgx, -0.16 + Math.sin(t * 0.85) * yf + motion.current.y * mgy - motion.current.s * 0.26, -3.8 + intro.current.p * 2.4 + motion.current.s * 0.55)
+    groupRef.current.rotation.set(Math.sin(t * 0.55) * (reducedMotion ? 0.06 : 0.12) - motion.current.y * (reducedMotion ? 0.08 : 0.18), t * (reducedMotion ? 0.45 : 0.7) + motion.current.x * (reducedMotion ? 0.08 : 0.14), 0)
 
     const incoming = currentIdx.current; const outgoing = outgoingIdx.current; const p = transition.current.p
     modelRefs.current.forEach((model, idx) => {
@@ -80,8 +80,8 @@ const AvatarModel = memo(function AvatarModel({
       const show = idx === incoming || (outgoing !== null && idx === outgoing)
       model.visible = show
       if (!show) return
-      const br = 1 + Math.sin(t * 1.2) * 0.016
-      model.rotation.set(Math.sin(t * 0.8) * 0.03, t * 0.25, 0)
+      const br = 1 + Math.sin(t * 0.9) * 0.012
+      model.rotation.set(Math.sin(t * 0.6) * 0.025, t * 0.22, 0)
       if (outgoing !== null && idx === outgoing) {
         const s = br * (1 - 0.25 * p); model.scale.set(s, s, s); model.position.z = -0.9 * p; setModelOpacity(model, 1 - p)
       } else {
@@ -93,7 +93,7 @@ const AvatarModel = memo(function AvatarModel({
   return (
     <group ref={groupRef}>
       {models.map((model, idx) => (
-        <primitive key={characters[idx].id} object={model} ref={(n: Object3D | null) => { modelRefs.current[idx] = n }} position={[0, -0.82, 0]} scale={1.42} visible={idx === activeIndex} />
+        <primitive key={characters[idx].id} object={model} ref={(n: Object3D | null) => { modelRefs.current[idx] = n }} position={[0, -0.68, 0]} scale={1.62} visible={idx === activeIndex} />
       ))}
     </group>
   )
@@ -110,20 +110,16 @@ interface HeroSectionProps {
 const t = {
   heroTitle: 'text-[28px] sm:text-[42px] lg:text-[52px] font-semibold tracking-[-0.02em] leading-[1.12]',
   tag: 'text-[11px] sm:text-[12px] font-medium tracking-[0.01em]',
-  body: 'text-[13px] sm:text-[16px] font-normal leading-7',
 }
 const fx = {
   hero3d: 'text-slate-800 [text-shadow:0_1px_0_rgba(255,255,255,0.82),0_3px_10px_rgba(30,41,59,0.14)]',
-  body3d: 'text-slate-700 [text-shadow:0_1px_0_rgba(255,255,255,0.72),0_3px_8px_rgba(30,41,59,0.1)]',
   chip3d: 'text-slate-700 [text-shadow:0_1px_0_rgba(255,255,255,0.65),0_2px_6px_rgba(30,41,59,0.08)]',
 }
 
 export const HeroSection = memo(function HeroSection({ activeIndex, onSwitch }: HeroSectionProps) {
   const sceneRef = useRef<HTMLElement>(null)
-  const bubbleRef = useRef<HTMLDivElement>(null)
   const canvasWrapRef = useRef<HTMLDivElement>(null)
   const titleRef = useRef<HTMLHeadingElement>(null)
-  const subtitleRef = useRef<HTMLParagraphElement>(null)
   const tagRefs = useRef<(HTMLSpanElement | null)[]>([])
   const mouseRef = useRef({ x: 0, y: 0 })
   const scrollRef = useRef(0)
@@ -135,7 +131,6 @@ export const HeroSection = memo(function HeroSection({ activeIndex, onSwitch }: 
   const handleModelClick = useCallback(() => {
     gsap.killTweensOf(clickBoostRef.current)
     gsap.fromTo(clickBoostRef.current, { model: 0 }, { model: 1, duration: 0.18, repeat: 1, yoyo: true, ease: 'power2.out' })
-    if (bubbleRef.current) gsap.fromTo(bubbleRef.current, { scale: 1 }, { scale: 1.06, duration: 0.16, repeat: 1, yoyo: true, ease: 'power2.out' })
   }, [])
 
   const onTouchStart = useCallback((e: React.TouchEvent) => { touchStartRef.current = { x: e.touches[0].clientX, y: e.touches[0].clientY } }, [])
@@ -172,7 +167,6 @@ export const HeroSection = memo(function HeroSection({ activeIndex, onSwitch }: 
     if (canvasWrapRef.current) gsap.fromTo(canvasWrapRef.current, { opacity: 0 }, { opacity: 1, duration: 1.2, ease: 'power2.out' })
     if (titleRef.current) gsap.fromTo(titleRef.current.querySelectorAll('span'), { y: 34, opacity: 0, scale: 0.92 }, { y: 0, opacity: 1, scale: 1, duration: 0.9, stagger: 0.12, ease: 'back.out(1.7)' })
     if (tagRefs.current.length) gsap.fromTo(tagRefs.current, { y: 14, opacity: 0 }, { y: 0, opacity: 1, duration: 0.65, stagger: 0.08, delay: 0.55, ease: 'power2.out' })
-    if (subtitleRef.current) gsap.fromTo(subtitleRef.current, { y: 10, opacity: 0 }, { y: 0, opacity: 1, delay: 0.7, duration: 0.7, ease: 'power2.out' })
 
     const scene = sceneRef.current; if (!scene) return () => { mq.removeEventListener('change', sync) }
     const onMove = (e: MouseEvent) => {
@@ -180,17 +174,16 @@ export const HeroSection = memo(function HeroSection({ activeIndex, onSwitch }: 
       const xa = Math.max(-1.6, Math.min(1.6, ((e.clientX - r.left) / r.width - 0.5) * 2.7))
       const ya = Math.max(-1.6, Math.min(1.6, ((e.clientY - r.top) / r.height - 0.5) * 2.7))
       mouseRef.current.x = xa; mouseRef.current.y = ya
-      if (bubbleRef.current) gsap.to(bubbleRef.current, { x: xa * (reducedMotion ? 10 : 28), y: ya * (reducedMotion ? 8 : 20), rotateZ: xa * (reducedMotion ? 2.4 : 5.8), duration: reducedMotion ? 0.45 : 0.82, ease: 'power3.out', overwrite: true })
     }
     const onScroll = () => { scrollRef.current = Math.min(1, window.scrollY / 420) }
-    const onLeave = () => { mouseRef.current.x = 0; mouseRef.current.y = 0; if (bubbleRef.current) gsap.to(bubbleRef.current, { x: 0, y: 0, rotateZ: 0, duration: 0.7, ease: 'power3.out' }) }
+    const onLeave = () => { mouseRef.current.x = 0; mouseRef.current.y = 0 }
     scene.addEventListener('mousemove', onMove); scene.addEventListener('mouseleave', onLeave)
     window.addEventListener('scroll', onScroll, { passive: true })
     return () => { mq.removeEventListener('change', sync); scene.removeEventListener('mousemove', onMove); scene.removeEventListener('mouseleave', onLeave); window.removeEventListener('scroll', onScroll) }
   }, [reducedMotion])
 
   useEffect(() => {
-    const items = [titleRef.current, subtitleRef.current, bubbleRef.current, ...tagRefs.current].filter(Boolean)
+    const items = [titleRef.current, ...tagRefs.current].filter(Boolean)
     if (!items.length) return
     gsap.fromTo(items, { y: 8, opacity: 0 }, { y: 0, opacity: 1, duration: reducedMotion ? 0.35 : 0.62, stagger: 0.06, ease: 'power2.out' })
   }, [activeIndex, reducedMotion])
@@ -203,23 +196,25 @@ export const HeroSection = memo(function HeroSection({ activeIndex, onSwitch }: 
       onMouseDown={onMouseDown} onMouseUp={onMouseUp}
     >
       <div className="relative h-[38vh] sm:h-[45vh] w-full max-w-2xl min-h-[220px] sm:min-h-[320px]" ref={canvasWrapRef}>
-        <button aria-label="上一位" className="absolute left-[3%] top-1/2 z-20 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-white/60 bg-white/25 text-slate-600/80 shadow-lg backdrop-blur-xl transition-all duration-300 hover:scale-110 hover:bg-white/50 hover:text-slate-800 hover:shadow-xl hover:border-white/80 active:scale-95" onClick={() => onSwitch(-1)} type="button"><span className="text-2xl leading-none font-light">‹</span></button>
-        <button aria-label="下一位" className="absolute right-[3%] top-1/2 z-20 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-white/60 bg-white/25 text-slate-600/80 shadow-lg backdrop-blur-xl transition-all duration-300 hover:scale-110 hover:bg-white/50 hover:text-slate-800 hover:shadow-xl hover:border-white/80 active:scale-95" onClick={() => onSwitch(1)} type="button"><span className="text-2xl leading-none font-light">›</span></button>
+        <button aria-label="上一位" className="absolute left-[3%] top-1/2 z-20 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-white/50 bg-white/20 text-slate-500 shadow-md backdrop-blur-2xl transition-all duration-300 hover:scale-110 hover:bg-white/55 hover:text-slate-800 hover:shadow-xl hover:border-white/70 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-500/50 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent group" onClick={() => onSwitch(-1)} type="button">
+          <svg className="h-5 w-5 transition-transform duration-300 group-hover:-translate-x-0.5" fill="none" viewBox="0 0 24 24" strokeWidth={1.8} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" /></svg>
+        </button>
+        <button aria-label="下一位" className="absolute right-[3%] top-1/2 z-20 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-white/50 bg-white/20 text-slate-500 shadow-md backdrop-blur-2xl transition-all duration-300 hover:scale-110 hover:bg-white/55 hover:text-slate-800 hover:shadow-xl hover:border-white/70 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-500/50 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent group" onClick={() => onSwitch(1)} type="button">
+          <svg className="h-5 w-5 transition-transform duration-300 group-hover:translate-x-0.5" fill="none" viewBox="0 0 24 24" strokeWidth={1.8} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" /></svg>
+        </button>
         <ErrorBoundary>
-          <Canvas camera={{ position: [0, 0.12, 5.15], fov: 34 }} dpr={[1, 1.5]} gl={{ antialias: true, powerPreference: 'high-performance' }} onPointerDown={handleModelClick}>
-            <ambientLight intensity={0.8} />
-            <hemisphereLight args={['#fff8ef', '#c8d4ff', 0.55]} />
-            <directionalLight position={[2.3, 3.5, 4]} intensity={1.1} color="#fff4e8" />
-            <directionalLight position={[-2.3, 1.6, 1.6]} intensity={0.7} color="#dbe7ff" />
-            <directionalLight position={[0, 2.2, -3]} intensity={0.42} color="#ffffff" />
-            <pointLight position={[0.2, 1.6, 1.8]} intensity={0.65} color="#ffffff" />
+          <Canvas camera={{ position: [0, 0.32, 4.6], fov: 32 }} dpr={[1, 2]} gl={{ antialias: true, powerPreference: 'high-performance', toneMapping: 4 }} onPointerDown={handleModelClick}>
+            <ambientLight intensity={0.55} />
+            <hemisphereLight args={['#fff8ef', '#b8c8e8', 0.5]} />
+            <directionalLight position={[3, 4, 3.5]} intensity={1.4} color="#fff8f0" />
+            <directionalLight position={[-2.5, 1.8, 2]} intensity={0.8} color="#e8eeff" />
+            <directionalLight position={[0, 2.5, -3.5]} intensity={0.55} color="#ffffff" />
+            <directionalLight position={[0, -0.5, 2]} intensity={0.3} color="#fff4e8" />
+            <pointLight position={[0, 1.8, 2.5]} intensity={0.8} color="#ffffff" />
             <AvatarModel activeIndex={activeIndex} mouseRef={mouseRef} scrollRef={scrollRef} reducedMotion={reducedMotion} clickBoostRef={clickBoostRef} />
-            <ContactShadows position={[0, -1.28, 0]} opacity={0.36} scale={6.6} blur={2.6} far={3.8} />
+            <ContactShadows position={[0, -1.18, 0]} opacity={0.42} scale={7} blur={2.2} far={3.5} />
           </Canvas>
         </ErrorBoundary>
-        <div className="pointer-events-none absolute right-[6%] top-[10%] rounded-2xl border border-white/70 bg-white/85 px-5 py-3 text-slate-700 shadow-[0_16px_36px_rgba(30,41,59,0.16)] backdrop-blur-2xl" ref={bubbleRef}>
-          <span className={`${t.body} ${fx.body3d}`}>{char.bubble}</span>
-        </div>
       </div>
 
       <h1 className={`mt-6 text-center ${t.heroTitle} ${fx.hero3d}`} ref={titleRef}>
@@ -229,31 +224,31 @@ export const HeroSection = memo(function HeroSection({ activeIndex, onSwitch }: 
       </h1>
       <div className="mt-5 flex flex-wrap justify-center gap-2">
         {char.tags.map((tag, idx) => (
-          <span className={`rounded-full border border-slate-300/70 bg-white/65 px-3 py-1 text-slate-700 transition-all duration-200 hover:bg-white/90 hover:shadow-lg hover:scale-105 hover:border-sky-300/80 cursor-default ${t.tag} ${fx.chip3d}`} key={tag} ref={n => { tagRefs.current[idx] = n }}>{tag}</span>
+          <span className={`rounded-full border border-slate-200/60 bg-white/55 px-3 py-1 text-slate-600 transition-all duration-300 ease-out hover:bg-white/85 hover:shadow-[0_0_18px_rgba(148,163,184,0.25)] hover:scale-[1.04] hover:border-slate-300/60 hover:text-slate-800 cursor-default select-none ${t.tag} ${fx.chip3d}`} key={tag} ref={n => { tagRefs.current[idx] = n }}>{tag}</span>
         ))}
       </div>
 
       <div className="mt-5 flex items-center gap-3">
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2.5">
           {characters.map((c, i) => (
             <button
               key={c.id}
               onClick={() => i !== activeIndex && onSwitch(i > activeIndex ? 1 : -1)}
-              className={`rounded-full transition-all duration-500 ${
+              className={`rounded-full transition-all duration-500 ease-out ${
                 i === activeIndex
-                  ? 'h-2 w-7 bg-slate-700 shadow-[0_0_12px_rgba(51,65,85,0.5)]'
-                  : 'h-2 w-2 bg-slate-400/40 hover:bg-slate-400/70 hover:scale-125'
+                  ? 'h-2 w-7 bg-slate-700 shadow-[0_0_14px_rgba(51,65,85,0.55)]'
+                  : 'h-2 w-2 bg-slate-300/50 hover:bg-slate-400/60 hover:scale-125 hover:shadow-[0_0_8px_rgba(148,163,184,0.35)]'
               }`}
               aria-label={c.titleSegments[2]}
             />
           ))}
         </div>
-        <span className="text-xs font-medium text-slate-500 tabular-nums">{activeIndex + 1} / {characters.length}</span>
+        <span className="text-xs font-medium text-slate-400 tabular-nums select-none">{activeIndex + 1} / {characters.length}</span>
       </div>
 
-      <p className={`mt-5 max-w-2xl text-center ${t.body} ${fx.body3d}`} ref={subtitleRef}>{char.subtitle}</p>
-      <div className="absolute bottom-8 left-1/2 flex -translate-x-1/2 animate-bounce">
-        <span className="text-xl text-slate-400/40">⌄</span>
+      <div className="absolute bottom-8 left-1/2 flex -translate-x-1/2 flex-col items-center gap-1.5">
+        <span className="text-[10px] font-medium tracking-[0.15em] text-slate-400/30 uppercase select-none">Scroll</span>
+        <svg className="h-4 w-4 animate-bounce text-slate-400/35" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" /></svg>
       </div>
     </section>
   )

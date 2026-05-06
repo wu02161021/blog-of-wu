@@ -14,6 +14,7 @@ export function MouseParticles() {
     let particles: Particle[] = []
     let mouse = { x: -100, y: -100 }
     let raf = 0
+    let idleTimer: ReturnType<typeof setTimeout>
 
     const resize = () => {
       canvas.width = window.innerWidth
@@ -22,7 +23,16 @@ export function MouseParticles() {
     resize()
     window.addEventListener('resize', resize)
 
-    const onMove = (e: MouseEvent) => { mouse.x = e.clientX; mouse.y = e.clientY }
+    const onMove = (e: MouseEvent) => {
+      mouse.x = e.clientX; mouse.y = e.clientY
+      clearTimeout(idleTimer)
+      if (!raf) raf = requestAnimationFrame(draw)
+      idleTimer = setTimeout(() => {
+        cancelAnimationFrame(raf)
+        raf = 0
+        particles = []
+      }, 2000)
+    }
 
     const spawn = () => {
       if (mouse.x < 0) return
@@ -59,12 +69,12 @@ export function MouseParticles() {
     }
 
     window.addEventListener('mousemove', onMove)
-    raf = requestAnimationFrame(draw)
 
     return () => {
       window.removeEventListener('resize', resize)
       window.removeEventListener('mousemove', onMove)
       cancelAnimationFrame(raf)
+      clearTimeout(idleTimer)
     }
   }, [])
 

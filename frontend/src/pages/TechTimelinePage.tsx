@@ -28,14 +28,14 @@ const Header = memo(function Header({
         aria-label={musicOn ? '关闭音乐' : '开启音乐'}
       >
         <Waveform active={musicOn} boost={musicBoost} />
-        <span className="inline-block origin-center transition-transform duration-75" style={{ transform: musicOn ? `scale(${1 + musicBoost * 0.18})` : 'scale(1)' }}>wu yu yang</span>
+        <span className="inline-block origin-center transition-transform duration-75" style={{ transform: musicOn ? `scale(${1 + musicBoost * 0.18})` : 'scale(1)' }}>Wuyuyang</span>
       </button>
       <div className="flex items-center gap-2">
         <ThemeToggle />
         <button
           className="rounded-full border border-white/60 bg-white/40 px-5 py-2 text-[11px] font-semibold tracking-[0.12em] text-slate-700/80 shadow-sm backdrop-blur-xl transition-all duration-300 hover:-translate-y-0.5 hover:bg-white/70 hover:shadow-lg hover:border-white/80 active:scale-95"
           onClick={onEnterConsole}
-        >进入控制台</button>
+        >Console</button>
       </div>
     </header>
   )

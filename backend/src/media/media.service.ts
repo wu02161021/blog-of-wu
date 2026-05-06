@@ -1,11 +1,11 @@
 import { BadRequestException, Injectable, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { existsSync, unlinkSync } from 'fs';
-import { join } from 'path';
+import { extname } from 'path';
 import { MediaImage } from './entities/media-image.entity';
 import { MediaVideo } from './entities/media-video.entity';
 import { CreateImageDto, CreateVideoDto, UpdateImageDto, UpdateVideoDto } from './dto/create-media.dto';
+import { SupabaseStorageService } from './supabase-storage.service';
 
 @Injectable()
 export class MediaService {
@@ -14,6 +14,7 @@ export class MediaService {
   constructor(
     @InjectRepository(MediaImage) private readonly imageRepo: Repository<MediaImage>,
     @InjectRepository(MediaVideo) private readonly videoRepo: Repository<MediaVideo>,
+    private readonly storage: SupabaseStorageService,
   ) {}
 
   private requireAdmin(email: string | undefined) {
@@ -22,12 +23,16 @@ export class MediaService {
     }
   }
 
+  private generateFilename(originalname: string): string {
+    return Date.now() + '-' + Math.round(Math.random() * 1e9) + extname(originalname);
+  }
+
   private toImageDto(img: MediaImage) {
-    return { ...img, fileUrl: '/uploads/images/' + img.fileName };
+    return { ...img, fileUrl: this.storage.getPublicUrl(img.fileName) };
   }
 
   private toVideoDto(vid: MediaVideo) {
-    return { ...vid, fileUrl: '/uploads/videos/' + vid.fileName };
+    return { ...vid, fileUrl: this.storage.getPublicUrl(vid.fileName) };
   }
 
   /* ── Images ── */
@@ -39,7 +44,11 @@ export class MediaService {
   async createImage(email: string | undefined, dto: CreateImageDto, file?: Record<string, any>) {
     this.requireAdmin(email);
     if (!file) throw new BadRequestException('请选择图片文件');
-    const img = this.imageRepo.create({ title: dto.title, fileName: file.filename, sortOrder: dto.sortOrder ?? 0 });
+
+    const filePath = 'images/' + this.generateFilename(file.originalname);
+    await this.storage.upload(filePath, file.buffer, file.mimetype);
+
+    const img = this.imageRepo.create({ title: dto.title, fileName: filePath, sortOrder: dto.sortOrder ?? 0 });
     const saved = await this.imageRepo.save(img);
     return this.toImageDto(saved);
   }
@@ -50,10 +59,10 @@ export class MediaService {
     if (!img) throw new BadRequestException('图片不存在');
 
     if (file) {
-      // delete old file
-      const oldPath = join(process.cwd(), 'uploads', 'images', img.fileName);
-      if (existsSync(oldPath)) unlinkSync(oldPath);
-      img.fileName = file.filename;
+      await this.storage.delete(img.fileName);
+      const filePath = 'images/' + this.generateFilename(file.originalname);
+      await this.storage.upload(filePath, file.buffer, file.mimetype);
+      img.fileName = filePath;
     }
     if (dto.title !== undefined) img.title = dto.title;
     if (dto.sortOrder !== undefined) img.sortOrder = dto.sortOrder;
@@ -65,8 +74,7 @@ export class MediaService {
     this.requireAdmin(email);
     const img = await this.imageRepo.findOneBy({ id });
     if (!img) throw new BadRequestException('图片不存在');
-    const filePath = join(process.cwd(), 'uploads', 'images', img.fileName);
-    if (existsSync(filePath)) unlinkSync(filePath);
+    await this.storage.delete(img.fileName);
     await this.imageRepo.remove(img);
     return { ok: true };
   }
@@ -80,7 +88,11 @@ export class MediaService {
   async createVideo(email: string | undefined, dto: CreateVideoDto, file?: Record<string, any>) {
     this.requireAdmin(email);
     if (!file) throw new BadRequestException('请选择视频文件');
-    const vid = this.videoRepo.create({ title: dto.title, fileName: file.filename, description: dto.description, duration: dto.duration, sortOrder: dto.sortOrder ?? 0 });
+
+    const filePath = 'videos/' + this.generateFilename(file.originalname);
+    await this.storage.upload(filePath, file.buffer, file.mimetype);
+
+    const vid = this.videoRepo.create({ title: dto.title, fileName: filePath, description: dto.description, duration: dto.duration, sortOrder: dto.sortOrder ?? 0 });
     const saved = await this.videoRepo.save(vid);
     return this.toVideoDto(saved);
   }
@@ -91,9 +103,10 @@ export class MediaService {
     if (!vid) throw new BadRequestException('视频不存在');
 
     if (file) {
-      const oldPath = join(process.cwd(), 'uploads', 'videos', vid.fileName);
-      if (existsSync(oldPath)) unlinkSync(oldPath);
-      vid.fileName = file.filename;
+      await this.storage.delete(vid.fileName);
+      const filePath = 'videos/' + this.generateFilename(file.originalname);
+      await this.storage.upload(filePath, file.buffer, file.mimetype);
+      vid.fileName = filePath;
     }
     if (dto.title !== undefined) vid.title = dto.title;
     if (dto.description !== undefined) vid.description = dto.description;
@@ -107,8 +120,7 @@ export class MediaService {
     this.requireAdmin(email);
     const vid = await this.videoRepo.findOneBy({ id });
     if (!vid) throw new BadRequestException('视频不存在');
-    const filePath = join(process.cwd(), 'uploads', 'videos', vid.fileName);
-    if (existsSync(filePath)) unlinkSync(filePath);
+    await this.storage.delete(vid.fileName);
     await this.videoRepo.remove(vid);
     return { ok: true };
   }

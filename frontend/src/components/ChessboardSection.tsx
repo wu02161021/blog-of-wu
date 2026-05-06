@@ -114,14 +114,15 @@ export const ChessboardSection = memo(function ChessboardSection({ onOpenModal }
             <div className="mb-4 flex items-center gap-2 shrink-0">
               <div className="flex items-center gap-2">
                 <span className="w-1 h-5 rounded-full bg-gradient-to-b from-sky-400 to-indigo-400" />
-                <span className="text-lg">🖼️</span>
+                <svg className="w-5 h-5 text-sky-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5"><path strokeLinecap="round" strokeLinejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.41a2.25 2.25 0 013.182 0l2.909 2.91m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" /></svg>
                 <h3 className="text-lg font-semibold tracking-[-0.01em] text-slate-800">图片</h3>
               </div>
             </div>
             <div className="relative flex-1 overflow-hidden min-h-0">
               {images.length === 0 ? (
-                <div className="flex items-center justify-center h-full">
-                  <span className="text-3xl text-slate-300">🖼</span>
+                <div className="flex flex-col items-center justify-center h-full gap-2 text-slate-400">
+                  <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.2"><path strokeLinecap="round" strokeLinejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.41a2.25 2.25 0 013.182 0l2.909 2.91m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" /></svg>
+                  <span className="text-xs">暂无图片</span>
                 </div>
               ) : (
                 <div className="flex h-full gap-3 animate-carousel-slide">
@@ -152,14 +153,15 @@ export const ChessboardSection = memo(function ChessboardSection({ onOpenModal }
             <div className="mb-4 flex items-center gap-2 shrink-0">
               <div className="flex items-center gap-2">
                 <span className="w-1 h-5 rounded-full bg-gradient-to-b from-amber-400 to-orange-400" />
-                <span className="text-lg">🎬</span>
+                <svg className="w-5 h-5 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5"><path strokeLinecap="round" strokeLinejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /><path strokeLinecap="round" strokeLinejoin="round" d="M15.91 11.672a.375.375 0 010 .656l-5.603 3.113a.375.375 0 01-.557-.328V8.887c0-.286.307-.466.557-.327l5.603 3.112z" /></svg>
                 <h3 className="text-lg font-semibold tracking-[-0.01em] text-slate-800">视频</h3>
               </div>
             </div>
             <div className="custom-scrollbar flex flex-1 flex-col gap-3 overflow-y-auto pr-1 min-h-0">
               {videos.length === 0 ? (
-                <div className="flex items-center justify-center py-12">
-                  <span className="text-3xl text-slate-300">🎬</span>
+                <div className="flex flex-col items-center justify-center py-12 gap-2 text-slate-400">
+                  <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.2"><path strokeLinecap="round" strokeLinejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /><path strokeLinecap="round" strokeLinejoin="round" d="M15.91 11.672a.375.375 0 010 .656l-5.603 3.113a.375.375 0 01-.557-.328V8.887c0-.286.307-.466.557-.327l5.603 3.112z" /></svg>
+                  <span className="text-xs">暂无视频</span>
                 </div>
               ) : (
                 videos.map((vid) => (
