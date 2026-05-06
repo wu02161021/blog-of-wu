@@ -37,6 +37,11 @@ const dbUrl = `postgres://${encodeURIComponent(dbUser)}:${encodeURIComponent(dbP
       url: dbUrl,
       autoLoadEntities: true,
       synchronize: dbSync,
+      extra: {
+        ssl: {
+          rejectUnauthorized: false,
+        },
+      },
     }),
     AuthModule,
     MessagesModule,
