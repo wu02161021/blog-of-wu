@@ -8,7 +8,6 @@ import { BackToTop } from '../components/BackToTop'
 import { Waveform } from '../components/Waveform'
 import { ThemeToggle } from '../components/ThemeToggle'
 import { Footer } from '../components/Footer'
-import { MouseParticles } from '../components/MouseParticles'
 import { FPSMonitor } from '../components/FPSMonitor'
 import { useAutoTheme } from '../hooks/useAutoTheme'
 
@@ -77,7 +76,6 @@ export function TechTimelinePage() {
 
       <ScrollProgress />
       <BackToTop />
-      <MouseParticles />
       <FPSMonitor />
 
       <Header musicOn={musicOn} musicBoost={musicBoost} onToggleMusic={toggleMusic} onEnterConsole={handleEnterConsole} />
