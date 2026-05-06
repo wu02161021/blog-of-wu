@@ -1,17 +1,18 @@
-import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { memo, Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import type { MutableRefObject } from 'react'
 import gsap from 'gsap'
 import { Canvas, useFrame } from '@react-three/fiber'
 import { ContactShadows, useGLTF } from '@react-three/drei'
 import type { Group, Material, Object3D } from 'three'
 import { ErrorBoundary } from './ErrorBoundary'
+import { ChessboardSkeleton } from './Skeletons'
 
 /* ── Data ── */
 export const characters = [
-  { id: 'kernel-bishop', modelPath: '/kernel-bishop-chess-piece/source/KernelBishop.glb', titleSegments: ['心有山海', '静水流深', '光而不耀'] as [string, string, string], tags: ['React · R3F 三维引擎', 'NestJS · 微服务架构', 'PostgreSQL · 数据建模'] as [string, string, string] },
-  { id: 'corn-pawn', modelPath: '/corn-pawn-chess-piece/source/CornPawn.glb', titleSegments: ['清风徐来', '水波不兴', '岁月静好'] as [string, string, string], tags: ['GSAP · 硬件加速', 'Tailwind · 治愈美学', 'Framer Motion · 微交互'] as [string, string, string] },
-  { id: 'corn-bishop', modelPath: '/corn-bishop-chess-piece/source/CornBishop.glb', titleSegments: ['行而不辍', '履践致远', '星河长明'] as [string, string, string], tags: ['TypeScript · 类型安全', 'ECharts · 数据叙事', 'WebSocket · 实时推送'] as [string, string, string] },
-  { id: 'queen', modelPath: '/queen-chess-piece/source/Queen.glb', titleSegments: ['以梦为马', '不负韶华', '人间值得'] as [string, string, string], tags: ['品牌视觉 · 统一美学', '3D 渲染 · GPU 加速', '交互设计 · 人本理念'] as [string, string, string] },
+  { id: 'kernel-bishop', modelPath: '/models/KernelBishop.glb', titleSegments: ['心有山海', '静水流深', '光而不耀'] as [string, string, string], tags: ['React · R3F 三维引擎', 'NestJS · 微服务架构', 'PostgreSQL · 数据建模'] as [string, string, string] },
+  { id: 'corn-pawn', modelPath: '/models/CornPawn.glb', titleSegments: ['清风徐来', '水波不兴', '岁月静好'] as [string, string, string], tags: ['GSAP · 硬件加速', 'Tailwind · 治愈美学', 'Framer Motion · 微交互'] as [string, string, string] },
+  { id: 'corn-bishop', modelPath: '/models/CornBishop.glb', titleSegments: ['行而不辍', '履践致远', '星河长明'] as [string, string, string], tags: ['TypeScript · 类型安全', 'ECharts · 数据叙事', 'WebSocket · 实时推送'] as [string, string, string] },
+  { id: 'queen', modelPath: '/models/Queen.glb', titleSegments: ['以梦为马', '不负韶华', '人间值得'] as [string, string, string], tags: ['品牌视觉 · 统一美学', '3D 渲染 · GPU 加速', '交互设计 · 人本理念'] as [string, string, string] },
 ]
 
 /* ── Helpers ── */
@@ -35,10 +36,10 @@ const AvatarModel = memo(function AvatarModel({
   reducedMotion: boolean
   clickBoostRef: MutableRefObject<{ model: number }>
 }) {
-  const kernel = useGLTF(characters[0].modelPath)
-  const pawn = useGLTF(characters[1].modelPath)
-  const bishop = useGLTF(characters[2].modelPath)
-  const queen = useGLTF(characters[3].modelPath)
+  const kernel = useGLTF(characters[0].modelPath, '/draco/')
+  const pawn = useGLTF(characters[1].modelPath, '/draco/')
+  const bishop = useGLTF(characters[2].modelPath, '/draco/')
+  const queen = useGLTF(characters[3].modelPath, '/draco/')
   const models = useMemo(() => [kernel.scene.clone(true), pawn.scene.clone(true), bishop.scene.clone(true), queen.scene.clone(true)], [kernel.scene, pawn.scene, bishop.scene, queen.scene])
   const groupRef = useRef<Group>(null)
   const modelRefs = useRef<(Object3D | null)[]>([])
@@ -99,7 +100,7 @@ const AvatarModel = memo(function AvatarModel({
   )
 })
 
-characters.forEach((item) => useGLTF.preload(item.modelPath))
+characters.forEach((item) => useGLTF.preload(item.modelPath, '/draco/'))
 
 /* ── Hero Section ── */
 interface HeroSectionProps {
@@ -126,7 +127,16 @@ export const HeroSection = memo(function HeroSection({ activeIndex, onSwitch }: 
   const clickBoostRef = useRef({ model: 0 })
   const touchStartRef = useRef<{ x: number; y: number } | null>(null)
   const [reducedMotion, setReducedMotion] = useState(false)
+  const [isMobile, setIsMobile] = useState(false)
   const char = characters[activeIndex]
+
+  useEffect(() => {
+    const mq = window.matchMedia('(max-width: 768px)')
+    setIsMobile(mq.matches)
+    const on = (e: MediaQueryListEvent) => setIsMobile(e.matches)
+    mq.addEventListener('change', on)
+    return () => mq.removeEventListener('change', on)
+  }, [])
 
   const handleModelClick = useCallback(() => {
     gsap.killTweensOf(clickBoostRef.current)
@@ -203,17 +213,24 @@ export const HeroSection = memo(function HeroSection({ activeIndex, onSwitch }: 
           <svg className="h-5 w-5 transition-transform duration-300 group-hover:translate-x-0.5" fill="none" viewBox="0 0 24 24" strokeWidth={1.8} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" /></svg>
         </button>
         <ErrorBoundary>
-          <Canvas camera={{ position: [0, 0.32, 4.6], fov: 32 }} dpr={[1, 2]} gl={{ antialias: true, powerPreference: 'high-performance', toneMapping: 4 }} onPointerDown={handleModelClick}>
-            <ambientLight intensity={0.55} />
-            <hemisphereLight args={['#fff8ef', '#b8c8e8', 0.5]} />
-            <directionalLight position={[3, 4, 3.5]} intensity={1.4} color="#fff8f0" />
-            <directionalLight position={[-2.5, 1.8, 2]} intensity={0.8} color="#e8eeff" />
-            <directionalLight position={[0, 2.5, -3.5]} intensity={0.55} color="#ffffff" />
-            <directionalLight position={[0, -0.5, 2]} intensity={0.3} color="#fff4e8" />
-            <pointLight position={[0, 1.8, 2.5]} intensity={0.8} color="#ffffff" />
-            <AvatarModel activeIndex={activeIndex} mouseRef={mouseRef} scrollRef={scrollRef} reducedMotion={reducedMotion} clickBoostRef={clickBoostRef} />
-            <ContactShadows position={[0, -1.18, 0]} opacity={0.42} scale={7} blur={2.2} far={3.5} />
-          </Canvas>
+          <Suspense fallback={<div className="h-full w-full flex items-center justify-center"><ChessboardSkeleton /></div>}>
+            <Canvas
+              camera={{ position: [0, 0.32, 4.6], fov: 32 }}
+              dpr={isMobile ? [0.75, 1] : [1, 2]}
+              gl={{ antialias: !isMobile, powerPreference: 'high-performance', toneMapping: 4 }}
+              performance={{ min: isMobile ? 0.3 : 0.5 }}
+              onPointerDown={handleModelClick}
+            >
+              <ambientLight intensity={0.55} />
+              {!isMobile && <hemisphereLight args={['#fff8ef', '#b8c8e8', 0.5]} />}
+              <directionalLight position={[3, 4, 3.5]} intensity={isMobile ? 0.9 : 1.4} color="#fff8f0" />
+              {!isMobile && <directionalLight position={[-2.5, 1.8, 2]} intensity={0.8} color="#e8eeff" />}
+              <directionalLight position={[0, 2.5, -3.5]} intensity={isMobile ? 0.3 : 0.55} color="#ffffff" />
+              {!isMobile && <pointLight position={[0, 1.8, 2.5]} intensity={0.8} color="#ffffff" />}
+              <AvatarModel activeIndex={activeIndex} mouseRef={mouseRef} scrollRef={scrollRef} reducedMotion={reducedMotion} clickBoostRef={clickBoostRef} />
+              <ContactShadows position={[0, -1.18, 0]} opacity={isMobile ? 0.25 : 0.42} scale={isMobile ? 5 : 7} blur={isMobile ? 1.5 : 2.2} far={isMobile ? 2.5 : 3.5} />
+            </Canvas>
+          </Suspense>
         </ErrorBoundary>
       </div>
 

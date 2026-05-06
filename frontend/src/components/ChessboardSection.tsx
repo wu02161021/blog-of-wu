@@ -16,23 +16,25 @@ function toFullUrl(url: string) {
   return url
 }
 
+const dracoDecoderPath = '/draco/'
+
 /* ── 3D Chessboard ── */
 const ChessBoardModel = memo(function ChessBoardModel() {
-  const { scene } = useGLTF('/autumn-chess-board/source/ChessBoard.glb')
+  const { scene } = useGLTF('/models/ChessBoard.glb', dracoDecoderPath)
   return <primitive object={scene.clone(true)} />
 })
-useGLTF.preload('/autumn-chess-board/source/ChessBoard.glb')
+useGLTF.preload('/models/ChessBoard.glb', dracoDecoderPath)
 
-const ChessBoardCanvas = memo(function ChessBoardCanvas() {
+const ChessBoardCanvas = memo(function ChessBoardCanvas({ isMobile }: { isMobile: boolean }) {
   return (
-    <Canvas camera={{ position: [1.5, 2, 3.8], fov: 36 }} gl={{ antialias: true }}>
+    <Canvas camera={{ position: [1.5, 2, 3.8], fov: 36 }} dpr={isMobile ? [0.75, 1] : [1, 2]} gl={{ antialias: !isMobile }} performance={{ min: isMobile ? 0.3 : 0.5 }}>
       <ambientLight intensity={0.5} />
-      <hemisphereLight args={['#fff8ef', '#c8d4ff', 0.45]} />
-      <directionalLight position={[3, 4, 3]} intensity={0.9} color="#fff4e8" />
-      <directionalLight position={[-2, 1.5, 1.5]} intensity={0.5} color="#dbe7ff" />
-      <pointLight position={[0, 2, 2]} intensity={0.6} color="#ffffff" />
+      {!isMobile && <hemisphereLight args={['#fff8ef', '#c8d4ff', 0.45]} />}
+      <directionalLight position={[3, 4, 3]} intensity={isMobile ? 0.6 : 0.9} color="#fff4e8" />
+      {!isMobile && <directionalLight position={[-2, 1.5, 1.5]} intensity={0.5} color="#dbe7ff" />}
+      {!isMobile && <pointLight position={[0, 2, 2]} intensity={0.6} color="#ffffff" />}
       <Suspense fallback={null}><ChessBoardModel /></Suspense>
-      <ContactShadows position={[0, -0.9, 0]} opacity={0.3} scale={5} blur={2.4} far={3} />
+      <ContactShadows position={[0, -0.9, 0]} opacity={isMobile ? 0.18 : 0.3} scale={isMobile ? 3 : 5} blur={isMobile ? 1.5 : 2.4} far={isMobile ? 2 : 3} />
       <OrbitControls enableZoom={false} enablePan={false} autoRotate autoRotateSpeed={0.5} minPolarAngle={Math.PI / 3} maxPolarAngle={Math.PI / 1.8} />
     </Canvas>
   )
@@ -61,10 +63,19 @@ interface ChessboardSectionProps {
 export const ChessboardSection = memo(function ChessboardSection({ onOpenModal }: ChessboardSectionProps) {
   const sectionRef = useRef<HTMLElement>(null)
   const [visible, setVisible] = useState(false)
+  const [isMobile, setIsMobile] = useState(false)
   const [images, setImages] = useState<MediaImage[]>([])
   const [videos, setVideos] = useState<MediaVideo[]>([])
   const [lightboxOpen, setLightboxOpen] = useState(false)
   const [lightboxIndex, setLightboxIndex] = useState(0)
+
+  useEffect(() => {
+    const mq = window.matchMedia('(max-width: 768px)')
+    setIsMobile(mq.matches)
+    const on = (e: MediaQueryListEvent) => setIsMobile(e.matches)
+    mq.addEventListener('change', on)
+    return () => mq.removeEventListener('change', on)
+  }, [])
 
   const fetchMedia = useCallback(async () => {
     try {
@@ -101,7 +112,7 @@ export const ChessboardSection = memo(function ChessboardSection({ onOpenModal }
         >
           <ErrorBoundary>
             <LazyBlock placeholder={<ChessboardSkeleton />}>
-              <ChessBoardCanvas />
+              <ChessBoardCanvas isMobile={isMobile} />
             </LazyBlock>
           </ErrorBoundary>
           <div className="pointer-events-none absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-white/70 via-white/30 to-transparent" />
