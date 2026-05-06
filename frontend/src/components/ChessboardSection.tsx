@@ -8,11 +8,12 @@ import { mediaApi, type MediaImage, type MediaVideo } from '../services/media'
 import { API_BASE_URL } from '../config/env'
 import { ImageLightbox } from './ImageLightbox'
 
-function toFullUrl(path: string) {
+function toFullUrl(url: string) {
+  if (url.startsWith('http')) return url
   if (API_BASE_URL.startsWith('http')) {
-    return API_BASE_URL.replace(/\/api$/, '') + path
+    return API_BASE_URL.replace(/\/api$/, '') + url
   }
-  return path
+  return url
 }
 
 /* ── 3D Chessboard ── */
