@@ -27,7 +27,7 @@ useGLTF.preload('/models/ChessBoard.glb', dracoDecoderPath)
 
 const ChessBoardCanvas = memo(function ChessBoardCanvas({ isMobile }: { isMobile: boolean }) {
   return (
-    <Canvas camera={{ position: [1.5, 2, 3.8], fov: 36 }} dpr={isMobile ? [0.75, 1] : [1, 2]} gl={{ antialias: !isMobile }} performance={{ min: isMobile ? 0.3 : 0.5 }}>
+    <Canvas camera={{ position: [1.5, 2, 3.8], fov: 36 }} dpr={isMobile ? [1, 1.5] : [1, 2]} gl={{ antialias: !isMobile }} performance={{ min: isMobile ? 0.3 : 0.5 }}>
       <ambientLight intensity={0.5} />
       {!isMobile && <hemisphereLight args={['#fff8ef', '#c8d4ff', 0.45]} />}
       <directionalLight position={[3, 4, 3]} intensity={isMobile ? 0.6 : 0.9} color="#fff4e8" />

@@ -216,7 +216,7 @@ export const HeroSection = memo(function HeroSection({ activeIndex, onSwitch }: 
           <Suspense fallback={<div className="h-full w-full flex items-center justify-center"><ChessboardSkeleton /></div>}>
             <Canvas
               camera={{ position: [0, 0.32, 4.6], fov: 32 }}
-              dpr={isMobile ? [0.75, 1] : [1, 2]}
+              dpr={isMobile ? [1, 1.5] : [1, 2]}
               gl={{ antialias: !isMobile, powerPreference: 'high-performance', toneMapping: 4 }}
               performance={{ min: isMobile ? 0.3 : 0.5 }}
               onPointerDown={handleModelClick}
