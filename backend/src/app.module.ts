@@ -24,7 +24,7 @@ const dbUser = String(process.env.DB_USER ?? 'postgres');
 const dbPassword = Buffer.from(String(process.env.DB_PASSWORD ?? ''), 'utf8').toString('utf8');
 const dbName = String(process.env.DB_NAME ?? 'solar_auth');
 const dbSync = String(process.env.DB_SYNC ?? 'false') === 'true';
-const dbUrl = `postgres://${encodeURIComponent(dbUser)}:${encodeURIComponent(dbPassword)}@${dbHost}:${dbPort}/${dbName}?sslmode=require`;
+const dbUrl = `postgres://${encodeURIComponent(dbUser)}:${encodeURIComponent(dbPassword)}@${dbHost}:${dbPort}/${dbName}`;
 
 @Module({
   imports: [
@@ -37,10 +37,8 @@ const dbUrl = `postgres://${encodeURIComponent(dbUser)}:${encodeURIComponent(dbP
       url: dbUrl,
       autoLoadEntities: true,
       synchronize: dbSync,
-      extra: {
-        ssl: {
-          rejectUnauthorized: false,
-        },
+      ssl: {
+        rejectUnauthorized: false,
       },
     }),
     AuthModule,
