@@ -10,7 +10,7 @@ interface ChessboardModalProps {
   onClose: () => void
 }
 
-const tabs = ['AI', '社区', '实用工具', '留言版', '通知中心'] as const
+const tabs = ['AI', '社区', '实用工具', '留言板', '通知中心'] as const
 type TabKey = (typeof tabs)[number]
 
 const aiModels = [
@@ -311,10 +311,10 @@ export function ChessboardModal({ open, onClose }: ChessboardModalProps) {
             </div>
           )}
 
-          {/* 留言版模块 */}
-          {activeTab === '留言版' && (
+          {/* 留言板模块 */}
+          {activeTab === '留言板' && (
             <div>
-              <h3 className="mb-1 text-lg font-semibold text-white">留言版</h3>
+              <h3 className="mb-1 text-lg font-semibold text-white">留言板</h3>
               <p className="mb-5 text-xs text-slate-500">说点什么吧</p>
 
               {/* Input */}
