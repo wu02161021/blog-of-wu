@@ -128,9 +128,7 @@ export function LoginPage() {
     <main className="login-layout" style={{ background: 'url(/login.webp) center/cover no-repeat', display: 'flex', alignItems: 'center', justifyContent: 'flex-end', paddingRight: 'clamp(32px, 10vw, 140px)' }}>
       <div className="pointer-events-none fixed inset-0 bg-black/30" />
       <section className="login-panel" ref={panelRef}>
-        <p className="login-badge">DEEP SPACE ACCESS</p>
         <h1 ref={titleRef}>欢迎登录</h1>
-        <p className="login-subtitle">wu yu yang</p>
 
         <form className="login-form" onSubmit={handleSubmit}>
           <label htmlFor="email">邮箱</label>

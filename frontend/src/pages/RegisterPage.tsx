@@ -83,7 +83,6 @@ export function RegisterPage() {
       <div className="pointer-events-none fixed inset-0 bg-black/30" />
       <section className="login-panel" ref={panelRef}>
         <h1>邮箱注册</h1>
-        <p className="login-subtitle">初始化身份轨道 · CREATE ACCOUNT</p>
         <form className="auth-form" onSubmit={handleSubmit}>
           <input placeholder="昵称" value={name} onChange={(e) => setName(e.target.value)} />
           <input placeholder="邮箱" value={email} onChange={(e) => setEmail(e.target.value)} />
