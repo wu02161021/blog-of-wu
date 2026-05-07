@@ -20,7 +20,7 @@ export const ThemeToggle = memo(function ThemeToggle() {
     <button
       type="button"
       onClick={toggle}
-      className="rounded-full border border-white/55 bg-white/25 px-3 py-1.5 text-sm backdrop-blur-xl backdrop-saturate-150 transition-all duration-300 hover:bg-white/45 hover:shadow-md active:scale-95 shadow-[inset_0_1px_0_rgba(255,255,255,0.4)]"
+      className="glass-btn rounded-full px-3 py-1.5 text-sm transition-all duration-300 hover:border-white/70 hover:shadow-[0_4px_20px_rgba(15,23,42,0.08),inset_0_1px_0_rgba(255,255,255,0.6)] active:scale-95"
       aria-label="切换主题"
     >
       {dark ? '☀️ 浅色' : '🌙 深色'}

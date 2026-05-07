@@ -9,7 +9,7 @@ const fx = {
 
 export const HeroSection = memo(function HeroSection() {
   return (
-    <section className="relative flex min-h-screen w-full flex-col items-center justify-center px-4 pb-16 pt-24 sm:px-6">
+    <section className="relative flex min-h-[100svh] w-full flex-col items-center justify-center px-4 pb-12 pt-20 sm:px-6 sm:pt-24">
       <h1 className={`mt-6 text-center ${t.heroTitle} ${fx.hero3d}`}>
         <span className="inline-block">心有山海</span>{' '}
         <span className="inline-block">静而无忧</span>

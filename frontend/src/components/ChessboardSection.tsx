@@ -103,11 +103,11 @@ export const ChessboardSection = memo(function ChessboardSection({ onOpenModal }
 
   return (
     <>
-    <section ref={sectionRef} className="relative flex min-h-screen w-full items-center px-4 py-16 sm:px-8 sm:py-24">
-      <div className="mx-auto flex w-full max-w-7xl flex-col gap-6 sm:gap-8 lg:flex-row lg:h-[75vh]">
+    <section ref={sectionRef} className="relative flex min-h-screen w-full items-center px-4 py-12 sm:px-8 sm:py-24">
+      <div className="mx-auto flex w-full max-w-7xl flex-col gap-5 sm:gap-8 lg:flex-row lg:h-[75vh]">
         {/* Left: Chessboard */}
         <div
-          className="s2-card glass-premium group relative h-[320px] sm:h-[400px] lg:h-auto flex-1 cursor-pointer overflow-hidden rounded-3xl transition-all duration-500 hover:border-white/70 hover:shadow-[0_12px_40px_rgba(15,23,42,0.12),inset_0_1px_0_rgba(255,255,255,0.5)] lg:min-h-full"
+          className="s2-card glass-premium group relative h-[260px] sm:h-[400px] lg:h-auto flex-1 cursor-pointer overflow-hidden rounded-2xl sm:rounded-3xl duration-500 hover:border-white/65 hover:shadow-[0_8px_40px_rgba(15,23,42,0.1),inset_0_1px_0_rgba(255,255,255,0.65),inset_0_-1px_0_rgba(255,255,255,0.1)] lg:min-h-full"
           onClick={onOpenModal}
         >
           <ErrorBoundary>
@@ -116,14 +116,14 @@ export const ChessboardSection = memo(function ChessboardSection({ onOpenModal }
             </LazyBlock>
           </ErrorBoundary>
           <div className="pointer-events-none absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-white/50 via-white/20 to-transparent" />
-          <span className="absolute bottom-6 left-1/2 -translate-x-1/2 rounded-full border border-white/60 bg-white/65 px-6 py-2.5 text-sm font-semibold text-slate-700 backdrop-blur-lg backdrop-saturate-150 transition-all duration-300 group-hover:bg-white/85 group-hover:border-white/80 group-hover:scale-105 shadow-md">查看全部</span>
+          <span className="absolute bottom-4 sm:bottom-6 left-1/2 -translate-x-1/2 rounded-full border border-white/60 bg-white/65 px-5 py-2 sm:px-6 sm:py-2.5 text-xs sm:text-sm font-semibold text-slate-700 backdrop-blur-lg backdrop-saturate-150 transition-all duration-300 group-hover:bg-white/85 group-hover:border-white/80 group-hover:scale-105 shadow-md">查看全部</span>
         </div>
 
         {/* Right: Modules - bigger */}
         <div className="flex flex-col gap-6 lg:w-[45%] lg:h-full">
           {/* 图片 */}
-          <div className="s2-module glass-premium-strong flex flex-1 flex-col rounded-3xl p-6 transition-all duration-300 hover:border-white/70 hover:shadow-[0_12px_40px_rgba(15,23,42,0.1),inset_0_1px_0_rgba(255,255,255,0.5)] min-h-0">
-            <div className="mb-4 flex items-center gap-2 shrink-0">
+          <div className="s2-module glass-premium-strong flex flex-1 flex-col rounded-2xl sm:rounded-3xl p-4 sm:p-6 duration-300 hover:border-white/65 hover:shadow-[0_8px_40px_rgba(15,23,42,0.1),inset_0_1px_0_rgba(255,255,255,0.65)] min-h-0">
+            <div className="mb-3 sm:mb-4 flex items-center gap-2 shrink-0">
               <div className="flex items-center gap-2">
                 <span className="w-1 h-5 rounded-full bg-gradient-to-b from-sky-400 to-indigo-400" />
                 <svg className="w-5 h-5 text-sky-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5"><path strokeLinecap="round" strokeLinejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.41a2.25 2.25 0 013.182 0l2.909 2.91m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" /></svg>
@@ -142,7 +142,7 @@ export const ChessboardSection = memo(function ChessboardSection({ onOpenModal }
                     <div
                       key={`${img.id}-${i}`}
                       onClick={() => { setLightboxIndex(i % images.length); setLightboxOpen(true) }}
-                      className="group/img shrink-0 cursor-pointer overflow-hidden rounded-2xl border border-white/60 bg-white/25 backdrop-blur-sm backdrop-saturate-150 transition-all duration-300 hover:border-sky-400/70 hover:shadow-xl"
+                      className="group/img shrink-0 cursor-pointer overflow-hidden rounded-xl sm:rounded-2xl border border-white/60 bg-white/25 backdrop-blur-sm backdrop-saturate-150 transition-all duration-300 hover:border-sky-400/70 hover:shadow-xl"
                       style={{ width: 'calc((100% - 12px) / 2)' }}
                     >
                       <img src={toFullUrl(img.fileUrl)} alt={img.title} className="h-full w-full object-cover transition duration-300 group-hover/img:scale-110" loading="lazy" />
@@ -161,15 +161,15 @@ export const ChessboardSection = memo(function ChessboardSection({ onOpenModal }
           </div>
 
           {/* 视频 */}
-          <div className="s2-module glass-premium-strong flex flex-1 flex-col rounded-3xl p-6 transition-all duration-300 hover:border-white/70 hover:shadow-[0_12px_40px_rgba(15,23,42,0.1),inset_0_1px_0_rgba(255,255,255,0.5)] min-h-0">
-            <div className="mb-4 flex items-center gap-2 shrink-0">
+          <div className="s2-module glass-premium-strong flex flex-1 flex-col rounded-2xl sm:rounded-3xl p-4 sm:p-6 duration-300 hover:border-white/65 hover:shadow-[0_8px_40px_rgba(15,23,42,0.1),inset_0_1px_0_rgba(255,255,255,0.65)] min-h-0">
+            <div className="mb-3 sm:mb-4 flex items-center gap-2 shrink-0">
               <div className="flex items-center gap-2">
                 <span className="w-1 h-5 rounded-full bg-gradient-to-b from-amber-400 to-orange-400" />
                 <svg className="w-5 h-5 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5"><path strokeLinecap="round" strokeLinejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /><path strokeLinecap="round" strokeLinejoin="round" d="M15.91 11.672a.375.375 0 010 .656l-5.603 3.113a.375.375 0 01-.557-.328V8.887c0-.286.307-.466.557-.327l5.603 3.112z" /></svg>
                 <h3 className="text-lg font-semibold tracking-[-0.01em] text-slate-800">视频</h3>
               </div>
             </div>
-            <div className="custom-scrollbar flex flex-1 flex-col gap-3 overflow-y-auto pr-1 min-h-0">
+            <div className="custom-scrollbar flex flex-1 flex-col gap-2 sm:gap-3 overflow-y-auto pr-1 min-h-0">
               {videos.length === 0 ? (
                 <div className="flex flex-col items-center justify-center py-12 gap-2 text-slate-400">
                   <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.2"><path strokeLinecap="round" strokeLinejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /><path strokeLinecap="round" strokeLinejoin="round" d="M15.91 11.672a.375.375 0 010 .656l-5.603 3.113a.375.375 0 01-.557-.328V8.887c0-.286.307-.466.557-.327l5.603 3.112z" /></svg>
@@ -177,7 +177,7 @@ export const ChessboardSection = memo(function ChessboardSection({ onOpenModal }
                 </div>
               ) : (
                 videos.map((vid) => (
-                  <div key={vid.id} className="group/vid shrink-0 rounded-2xl border border-white/60 bg-white/25 backdrop-blur-sm backdrop-saturate-150 overflow-hidden transition-all duration-300 hover:border-sky-400/70 hover:shadow-xl">
+                  <div key={vid.id} className="group/vid shrink-0 rounded-xl sm:rounded-2xl border border-white/60 bg-white/25 backdrop-blur-sm backdrop-saturate-150 overflow-hidden transition-all duration-300 hover:border-sky-400/70 hover:shadow-xl">
                     <video src={toFullUrl(vid.fileUrl)} controls preload="metadata" className="w-full aspect-video object-cover bg-black/20" />
                     <div className="flex items-center gap-3 px-4 py-2.5">
                       <div className="flex-1 min-w-0">

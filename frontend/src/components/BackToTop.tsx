@@ -28,7 +28,7 @@ export function BackToTop() {
       ref={refCallback}
       type="button"
       onClick={scrollToTop}
-      className="fixed bottom-6 right-6 z-40 flex h-10 w-10 items-center justify-center rounded-full border border-white/55 bg-white/50 text-slate-500 shadow-lg backdrop-blur-xl backdrop-saturate-150 transition-colors hover:bg-white/75 hover:text-slate-700"
+      className="glass-btn fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-40 flex h-11 w-11 sm:h-10 sm:w-10 items-center justify-center rounded-full text-slate-500 transition-colors hover:text-slate-700 hover:border-white/70 hover:shadow-[0_4px_20px_rgba(15,23,42,0.08),inset_0_1px_0_rgba(255,255,255,0.6)]"
       aria-label="回到顶部"
       style={{ opacity: 0, pointerEvents: visible ? 'auto' : 'none' }}
     >

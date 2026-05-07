@@ -20,7 +20,7 @@ const Header = memo(function Header({
       <div />
       <div className="flex items-center gap-2">
         <button
-          className="rounded-full border border-white/55 bg-white/30 px-5 py-2 text-[11px] font-semibold tracking-[0.12em] text-slate-700/80 shadow-sm backdrop-blur-xl backdrop-saturate-150 transition-all duration-300 hover:-translate-y-0.5 hover:bg-white/55 hover:shadow-lg hover:border-white/70 active:scale-95"
+          className="glass-btn rounded-full px-5 py-2.5 min-h-[44px] text-[11px] font-semibold tracking-[0.12em] text-slate-700/80 transition-all duration-300 hover:-translate-y-0.5 hover:border-white/70 hover:shadow-[0_4px_20px_rgba(15,23,42,0.08),inset_0_1px_0_rgba(255,255,255,0.6)] active:scale-95"
           onClick={onEnterConsole}
         >Console</button>
       </div>
@@ -30,24 +30,28 @@ const Header = memo(function Header({
 
 function VideoBackground() {
   const ref = useRef<HTMLVideoElement>(null)
+  const [ready, setReady] = useState(false)
 
   useEffect(() => {
     const el = ref.current
     if (!el) return
     el.play().catch(() => {
-      // some browsers need a user gesture even for muted — retry on first interaction
       const resume = () => { el.play(); document.removeEventListener('pointerdown', resume) }
       document.addEventListener('pointerdown', resume)
     })
   }, [])
 
   return (
-    <video
-      ref={ref}
-      autoPlay muted loop playsInline preload="auto"
-      className="pointer-events-none fixed inset-0 h-full w-full object-cover"
-      src="/back.mp4"
-    />
+    <>
+      <div className="pointer-events-none fixed inset-0 bg-gradient-to-b from-[#0a0f1e] via-[#0d1528] to-[#050a18]" />
+      <video
+        ref={ref}
+        autoPlay muted loop playsInline disableRemotePlayback preload="auto"
+        className={`pointer-events-none fixed inset-0 h-full w-full object-cover transition-opacity duration-700 ${ready ? 'opacity-100' : 'opacity-0'}`}
+        src="/back.mp4"
+        onCanPlay={() => setReady(true)}
+      />
+    </>
   )
 }
 
