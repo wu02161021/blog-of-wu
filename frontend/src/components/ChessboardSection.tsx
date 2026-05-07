@@ -107,7 +107,7 @@ export const ChessboardSection = memo(function ChessboardSection({ onOpenModal }
       <div className="mx-auto flex w-full max-w-7xl flex-col gap-6 sm:gap-8 lg:flex-row lg:h-[75vh]">
         {/* Left: Chessboard */}
         <div
-          className="s2-card group relative h-[320px] sm:h-[400px] lg:h-auto flex-1 cursor-pointer overflow-hidden rounded-3xl border border-white/50 bg-white/15 backdrop-blur-md shadow-[0_20px_50px_rgba(15,23,42,0.10),0_0_0_1px_rgba(255,255,255,0.05)_inset] transition-all duration-500 hover:shadow-[0_32px_72px_rgba(15,23,42,0.20),0_0_0_1px_rgba(255,255,255,0.08)_inset] hover:border-white/70 lg:min-h-full"
+          className="s2-card glass-premium group relative h-[320px] sm:h-[400px] lg:h-auto flex-1 cursor-pointer overflow-hidden rounded-3xl transition-all duration-500 hover:border-white/70 hover:shadow-[0_12px_40px_rgba(15,23,42,0.12),inset_0_1px_0_rgba(255,255,255,0.5)] lg:min-h-full"
           onClick={onOpenModal}
         >
           <ErrorBoundary>
@@ -115,14 +115,14 @@ export const ChessboardSection = memo(function ChessboardSection({ onOpenModal }
               <ChessBoardCanvas isMobile={isMobile} />
             </LazyBlock>
           </ErrorBoundary>
-          <div className="pointer-events-none absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-white/70 via-white/30 to-transparent" />
-          <span className="absolute bottom-6 left-1/2 -translate-x-1/2 rounded-full border border-white/50 bg-white/55 px-6 py-2.5 text-sm font-semibold text-slate-700 backdrop-blur-md transition-all duration-300 group-hover:bg-white/75 group-hover:border-white/80 group-hover:scale-105 shadow-md">查看全部</span>
+          <div className="pointer-events-none absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-white/50 via-white/20 to-transparent" />
+          <span className="absolute bottom-6 left-1/2 -translate-x-1/2 rounded-full border border-white/60 bg-white/65 px-6 py-2.5 text-sm font-semibold text-slate-700 backdrop-blur-lg backdrop-saturate-150 transition-all duration-300 group-hover:bg-white/85 group-hover:border-white/80 group-hover:scale-105 shadow-md">查看全部</span>
         </div>
 
         {/* Right: Modules - bigger */}
         <div className="flex flex-col gap-6 lg:w-[45%] lg:h-full">
           {/* 图片 */}
-          <div className="s2-module flex flex-1 flex-col rounded-3xl border border-white/50 bg-white/30 backdrop-blur-md p-6 shadow-[0_16px_36px_rgba(15,23,42,0.08),0_0_0_1px_rgba(255,255,255,0.04)_inset] transition-all duration-300 hover:shadow-[0_20px_44px_rgba(15,23,42,0.13),0_0_0_1px_rgba(255,255,255,0.06)_inset] min-h-0">
+          <div className="s2-module glass-premium-strong flex flex-1 flex-col rounded-3xl p-6 transition-all duration-300 hover:border-white/70 hover:shadow-[0_12px_40px_rgba(15,23,42,0.1),inset_0_1px_0_rgba(255,255,255,0.5)] min-h-0">
             <div className="mb-4 flex items-center gap-2 shrink-0">
               <div className="flex items-center gap-2">
                 <span className="w-1 h-5 rounded-full bg-gradient-to-b from-sky-400 to-indigo-400" />
@@ -142,7 +142,7 @@ export const ChessboardSection = memo(function ChessboardSection({ onOpenModal }
                     <div
                       key={`${img.id}-${i}`}
                       onClick={() => { setLightboxIndex(i % images.length); setLightboxOpen(true) }}
-                      className="group/img shrink-0 cursor-pointer overflow-hidden rounded-2xl border border-white/60 bg-white/30 transition-all duration-300 hover:border-sky-400/70 hover:shadow-xl"
+                      className="group/img shrink-0 cursor-pointer overflow-hidden rounded-2xl border border-white/60 bg-white/25 backdrop-blur-sm backdrop-saturate-150 transition-all duration-300 hover:border-sky-400/70 hover:shadow-xl"
                       style={{ width: 'calc((100% - 12px) / 2)' }}
                     >
                       <img src={toFullUrl(img.fileUrl)} alt={img.title} className="h-full w-full object-cover transition duration-300 group-hover/img:scale-110" loading="lazy" />
@@ -153,15 +153,15 @@ export const ChessboardSection = memo(function ChessboardSection({ onOpenModal }
               {/* fade edges */}
               {images.length > 0 && (
                 <>
-                  <div className="pointer-events-none absolute inset-y-0 left-0 w-8 bg-gradient-to-r from-white/30 to-transparent z-10" />
-                  <div className="pointer-events-none absolute inset-y-0 right-0 w-8 bg-gradient-to-r from-transparent to-white/30 z-10" />
+                  <div className="pointer-events-none absolute inset-y-0 left-0 w-8 bg-gradient-to-r from-white/25 to-transparent z-10" />
+                  <div className="pointer-events-none absolute inset-y-0 right-0 w-8 bg-gradient-to-r from-transparent to-white/25 z-10" />
                 </>
               )}
             </div>
           </div>
 
           {/* 视频 */}
-          <div className="s2-module flex flex-1 flex-col rounded-3xl border border-white/50 bg-white/30 backdrop-blur-md p-6 shadow-[0_16px_36px_rgba(15,23,42,0.08),0_0_0_1px_rgba(255,255,255,0.04)_inset] transition-all duration-300 hover:shadow-[0_20px_44px_rgba(15,23,42,0.13),0_0_0_1px_rgba(255,255,255,0.06)_inset] min-h-0">
+          <div className="s2-module glass-premium-strong flex flex-1 flex-col rounded-3xl p-6 transition-all duration-300 hover:border-white/70 hover:shadow-[0_12px_40px_rgba(15,23,42,0.1),inset_0_1px_0_rgba(255,255,255,0.5)] min-h-0">
             <div className="mb-4 flex items-center gap-2 shrink-0">
               <div className="flex items-center gap-2">
                 <span className="w-1 h-5 rounded-full bg-gradient-to-b from-amber-400 to-orange-400" />
@@ -177,7 +177,7 @@ export const ChessboardSection = memo(function ChessboardSection({ onOpenModal }
                 </div>
               ) : (
                 videos.map((vid) => (
-                  <div key={vid.id} className="group/vid shrink-0 rounded-2xl border border-white/60 bg-white/30 overflow-hidden transition-all duration-300 hover:border-sky-400/70 hover:shadow-xl">
+                  <div key={vid.id} className="group/vid shrink-0 rounded-2xl border border-white/60 bg-white/25 backdrop-blur-sm backdrop-saturate-150 overflow-hidden transition-all duration-300 hover:border-sky-400/70 hover:shadow-xl">
                     <video src={toFullUrl(vid.fileUrl)} controls preload="metadata" className="w-full aspect-video object-cover bg-black/20" />
                     <div className="flex items-center gap-3 px-4 py-2.5">
                       <div className="flex-1 min-w-0">
