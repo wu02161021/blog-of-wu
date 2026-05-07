@@ -1,11 +1,9 @@
-import { lazy, memo, Suspense, useCallback, useMemo, useState } from 'react'
+import { lazy, memo, Suspense, useCallback, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { useMusicPlayer } from '../hooks/useMusicPlayer'
 import { HeroSection, characters } from '../components/HeroSection'
 import { ChessboardSection } from '../components/ChessboardSection'
 import { ScrollProgress } from '../components/ScrollProgress'
 import { BackToTop } from '../components/BackToTop'
-import { Waveform } from '../components/Waveform'
 import { ThemeToggle } from '../components/ThemeToggle'
 import { Footer } from '../components/Footer'
 import { FPSMonitor } from '../components/FPSMonitor'
@@ -14,21 +12,13 @@ import { useAutoTheme } from '../hooks/useAutoTheme'
 const ChessboardModal = lazy(() => import('../components/ChessboardModal').then(m => ({ default: m.ChessboardModal })))
 
 const Header = memo(function Header({
-  musicOn, musicBoost, onToggleMusic, onEnterConsole,
+  onEnterConsole,
 }: {
-  musicOn: boolean; musicBoost: number; onToggleMusic: () => void; onEnterConsole: () => void
+  onEnterConsole: () => void
 }) {
   return (
     <header className="fixed left-0 right-0 top-0 z-20 flex w-full items-center justify-between p-4 sm:p-6">
-      <button
-        type="button"
-        onClick={onToggleMusic}
-        className="flex items-center gap-1.5 rounded-full border border-white/60 bg-white/40 px-3 py-2 text-[11px] font-semibold tracking-[0.12em] text-slate-700/80 shadow-sm backdrop-blur-xl transition-all duration-300 hover:bg-white/70 hover:shadow-md hover:border-white/80 active:scale-95"
-        aria-label={musicOn ? '关闭音乐' : '开启音乐'}
-      >
-        <Waveform active={musicOn} boost={musicBoost} />
-        <span className="inline-block origin-center transition-transform duration-75" style={{ transform: musicOn ? `scale(${1 + musicBoost * 0.18})` : 'scale(1)' }}>Wuyuyang</span>
-      </button>
+      <div />
       <div className="flex items-center gap-2">
         <ThemeToggle />
         <button
@@ -47,19 +37,11 @@ export function TechTimelinePage() {
   const [activeIndex, setActiveIndex] = useState(0)
   const [modalOpen, setModalOpen] = useState(false)
 
-  const playlist = useMemo(() => ['/music/edges_bend.mp3', '/music/water_over_stone.mp3'], [])
-  const { musicBoost, play: playMusic, stop: stopMusic } = useMusicPlayer(playlist, true)
-  const [musicOn, setMusicOn] = useState(true)
-
   const handleEnterConsole = useCallback(() => {
     if (isLeaving) return
     setIsLeaving(true)
     window.setTimeout(() => navigate('/login'), 320)
   }, [navigate, isLeaving])
-
-  const toggleMusic = useCallback(() => {
-    setMusicOn(prev => { prev ? stopMusic() : playMusic(); return !prev })
-  }, [playMusic, stopMusic])
 
   const switchCharacter = useCallback((dir: -1 | 1) => {
     setActiveIndex(prev => (prev + dir + characters.length) % characters.length)
@@ -78,7 +60,7 @@ export function TechTimelinePage() {
       <BackToTop />
       <FPSMonitor />
 
-      <Header musicOn={musicOn} musicBoost={musicBoost} onToggleMusic={toggleMusic} onEnterConsole={handleEnterConsole} />
+      <Header onEnterConsole={handleEnterConsole} />
 
       <HeroSection activeIndex={activeIndex} onSwitch={switchCharacter} />
 

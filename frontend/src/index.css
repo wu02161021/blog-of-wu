@@ -1676,11 +1676,6 @@ html[data-theme='light'] .user-popover {
   animation-play-state: paused;
 }
 
-@keyframes waveform-bar {
-  from { transform: scaleY(0.4); opacity: 0.5; }
-  to { transform: scaleY(1); opacity: 1; }
-}
-
 /* Dark theme overrides */
 html[data-theme='dark'] body {
   background: #030712;
