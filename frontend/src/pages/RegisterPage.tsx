@@ -3,7 +3,6 @@ import type { FormEvent } from 'react'
 import gsap from 'gsap'
 import { Link, useNavigate } from 'react-router-dom'
 import { authApi } from '../services/auth'
-import { LoginScene } from '../components/LoginScene'
 import { SlideCaptchaDeepSpace } from '../components/SlideCaptchaDeepSpace'
 import { tokenStorage } from '../utils/token'
 
@@ -30,7 +29,6 @@ function EyeIcon({ open }: { open: boolean }) {
 export function RegisterPage() {
   const navigate = useNavigate()
   const panelRef = useRef<HTMLElement>(null)
-  const sceneRef = useRef<HTMLDivElement>(null)
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -44,9 +42,6 @@ export function RegisterPage() {
 
   useEffect(() => {
     if (!panelRef.current) return
-    if (sceneRef.current) {
-      gsap.fromTo(sceneRef.current, { opacity: 0, scale: 1.03 }, { opacity: 1, scale: 1, duration: 1.1, ease: 'power2.out' })
-    }
     gsap.fromTo(
       panelRef.current,
       { y: 30, opacity: 0, scale: 0.98 },
@@ -84,10 +79,8 @@ export function RegisterPage() {
   }
 
   return (
-    <main className="login-layout">
-      <div className="login-scene-wrap register-scene-wrap" ref={sceneRef}>
-        <LoginScene mode="register" />
-      </div>
+    <main className="login-layout" style={{ background: 'url(/Register.webp) center/cover no-repeat', display: 'flex', alignItems: 'center', justifyContent: 'flex-end', paddingRight: 'clamp(32px, 10vw, 140px)' }}>
+      <div className="pointer-events-none fixed inset-0 bg-black/30" />
       <section className="login-panel" ref={panelRef}>
         <h1>邮箱注册</h1>
         <p className="login-subtitle">初始化身份轨道 · CREATE ACCOUNT</p>

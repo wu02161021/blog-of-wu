@@ -1,4 +1,4 @@
-import { lazy, memo, Suspense, useCallback, useEffect, useRef, useState } from 'react'
+import { lazy, memo, Suspense, useCallback, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { HeroSection } from '../components/HeroSection'
 import { ChessboardSection } from '../components/ChessboardSection'
@@ -28,33 +28,6 @@ const Header = memo(function Header({
   )
 })
 
-function VideoBackground() {
-  const ref = useRef<HTMLVideoElement>(null)
-  const [ready, setReady] = useState(false)
-
-  useEffect(() => {
-    const el = ref.current
-    if (!el) return
-    el.play().catch(() => {
-      const resume = () => { el.play(); document.removeEventListener('pointerdown', resume) }
-      document.addEventListener('pointerdown', resume)
-    })
-  }, [])
-
-  return (
-    <>
-      <div className="pointer-events-none fixed inset-0 bg-gradient-to-b from-[#0a0f1e] via-[#0d1528] to-[#050a18]" />
-      <video
-        ref={ref}
-        autoPlay muted loop playsInline disableRemotePlayback preload="auto"
-        className={`pointer-events-none fixed inset-0 h-full w-full object-cover transition-opacity duration-700 ${ready ? 'opacity-100' : 'opacity-0'}`}
-        src="/back.mp4"
-        onCanPlay={() => setReady(true)}
-      />
-    </>
-  )
-}
-
 export function TechTimelinePage() {
   useAutoTheme()
   const navigate = useNavigate()
@@ -73,8 +46,6 @@ export function TechTimelinePage() {
 
   return (
     <main id="homepage-root" className={`tech-page overflow-x-hidden transition-all duration-300 ${isLeaving ? 'opacity-0' : 'opacity-100'}`}>
-      <VideoBackground />
-
       <ScrollProgress />
       <BackToTop />
       <FPSMonitor />

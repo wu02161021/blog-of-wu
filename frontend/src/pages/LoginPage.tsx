@@ -3,7 +3,6 @@ import type { FormEvent } from 'react'
 import gsap from 'gsap'
 import { Link, useNavigate } from 'react-router-dom'
 import { authApi } from '../services/auth'
-import { LoginScene } from '../components/LoginScene'
 import { SlideCaptchaDeepSpace } from '../components/SlideCaptchaDeepSpace'
 import { tokenStorage } from '../utils/token'
 
@@ -31,7 +30,6 @@ export function LoginPage() {
   const navigate = useNavigate()
   const panelRef = useRef<HTMLElement>(null)
   const titleRef = useRef<HTMLHeadingElement>(null)
-  const sceneRef = useRef<HTMLDivElement>(null)
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
@@ -49,9 +47,6 @@ export function LoginPage() {
       return
     }
     if (!panelRef.current) return
-    if (sceneRef.current) {
-      gsap.fromTo(sceneRef.current, { opacity: 0, scale: 1.03 }, { opacity: 1, scale: 1, duration: 1.1, ease: 'power2.out' })
-    }
     gsap.fromTo(
       panelRef.current,
       { y: 30, opacity: 0, scale: 0.98 },
@@ -130,11 +125,8 @@ export function LoginPage() {
   }
 
   return (
-    <main className="login-layout">
-      <div className="login-scene-wrap" ref={sceneRef}>
-        <LoginScene />
-      </div>
-
+    <main className="login-layout" style={{ background: 'url(/login.webp) center/cover no-repeat', display: 'flex', alignItems: 'center', justifyContent: 'flex-end', paddingRight: 'clamp(32px, 10vw, 140px)' }}>
+      <div className="pointer-events-none fixed inset-0 bg-black/30" />
       <section className="login-panel" ref={panelRef}>
         <p className="login-badge">DEEP SPACE ACCESS</p>
         <h1 ref={titleRef}>欢迎登录</h1>
@@ -204,10 +196,7 @@ export function LoginPage() {
               />
               记住登录状态
             </label>
-            <Link className="forgot-link" to="/forgot-password">
-              忘记密码?
-            </Link>
-          </div>
+              </div>
 
           {error && <p className="form-message error">{error}</p>}
           {success && <p className="form-message success">{success}</p>}

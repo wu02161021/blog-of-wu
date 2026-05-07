@@ -198,7 +198,8 @@ export function ChessboardModal({ open, onClose }: ChessboardModalProps) {
         ref={cardRef}
         className="relative flex w-full max-w-3xl flex-col overflow-hidden rounded-2xl border border-white/20 mx-2 sm:mx-0"
         style={{
-          background: 'linear-gradient(165deg, rgba(15, 23, 42, 0.92) 0%, rgba(19, 27, 48, 0.84) 100%)',
+          background: 'linear-gradient(165deg, rgba(15,23,42,0.92), rgba(19,27,48,0.84)), url(/page.webp) center/cover',
+          backgroundBlendMode: 'overlay',
           boxShadow: '0 28px 72px rgba(2, 6, 23, 0.68), inset 0 1px 0 rgba(255,255,255,0.08)',
           minHeight: '380px',
           maxHeight: '90vh',
