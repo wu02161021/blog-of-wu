@@ -8,6 +8,7 @@ import { tokenStorage } from '../utils/token'
 import type { DashboardData, UserManagementItem } from '../types/auth'
 import type { Group } from 'three'
 import { mediaApi, type MediaImage, type MediaVideo } from '../services/media'
+import { http } from '../services/http'
 import { useToast } from '../components/Toast'
 
 function useCounter(value: number, duration = 500) {
@@ -269,19 +270,15 @@ export function DashboardPage() {
 
   const fetchNotifications = useCallback(async () => {
     try {
-      const res = await fetch('/api/notifications', { headers: { Authorization: `Bearer ${tokenStorage.getAccessToken()}` } })
-      setNotifications(await res.json())
+      const res = await http.get('/notifications')
+      setNotifications(res.data ?? [])
     } catch { /* */ }
   }, [])
 
   const handleAddNotification = async () => {
     if (!notiForm.content.trim()) return
     try {
-      await fetch('/api/notifications', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${tokenStorage.getAccessToken()}` },
-        body: JSON.stringify(notiForm),
-      })
+      await http.post('/notifications', notiForm)
       setNotiForm({ type: '系统', content: '' })
       await fetchNotifications()
       toast('通知发送成功', 'success')
@@ -290,7 +287,7 @@ export function DashboardPage() {
 
   const handleDeleteNotification = async (id: string) => {
     try {
-      await fetch(`/api/notifications/${id}`, { method: 'DELETE', headers: { Authorization: `Bearer ${tokenStorage.getAccessToken()}` } })
+      await http.delete(`/notifications/${id}`)
       await fetchNotifications()
     } catch { /* */ }
   }
