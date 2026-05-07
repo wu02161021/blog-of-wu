@@ -254,7 +254,7 @@ export function ChessboardModal({ open, onClose }: ChessboardModalProps) {
                     href={model.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="group relative flex flex-col items-center gap-3 rounded-2xl border border-white/10 bg-white/5 p-5 transition-all duration-300 hover:-translate-y-1 cursor-pointer"
+                    className="group relative flex flex-col items-center gap-3 rounded-2xl border border-white/10 bg-white/5 p-5 transition-all duration-300 hover:-translate-y-1 cursor-pointer no-underline"
                     style={{ boxShadow: `0 0 0 0 ${model.glow}` }}
                     onMouseEnter={e => { e.currentTarget.style.boxShadow = `0 8px 30px ${model.glow}, 0 0 0 1px ${model.glow}` }}
                     onMouseLeave={e => { e.currentTarget.style.boxShadow = `0 0 0 0 ${model.glow}` }}
@@ -279,7 +279,7 @@ export function ChessboardModal({ open, onClose }: ChessboardModalProps) {
               <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
                 {techCommunities.map((site) => (
                   <a key={site.name} href={site.url} target="_blank" rel="noopener noreferrer"
-                    className={`group flex flex-col items-center gap-2 rounded-xl bg-gradient-to-br ${site.color} p-5 text-center transition-all hover:scale-[1.03] hover:shadow-xl`}>
+                    className={`group flex flex-col items-center gap-2 rounded-xl bg-gradient-to-br ${site.color} p-5 text-center transition-all hover:scale-[1.03] hover:shadow-xl no-underline`}>
                     <span className="text-lg font-semibold text-white">{site.name}</span>
                     <span className="text-xs text-white/75">{site.desc}</span>
                     <span className="mt-1 rounded-full bg-white/20 px-3 py-1 text-[10px] text-white/80 transition group-hover:bg-white/30">进入站点 →</span>
@@ -301,7 +301,7 @@ export function ChessboardModal({ open, onClose }: ChessboardModalProps) {
                     href={tool.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="group flex flex-col items-center gap-2 rounded-xl border border-white/10 bg-white/5 p-4 text-center transition-all hover:-translate-y-0.5 hover:border-white/25 hover:bg-white/10 cursor-pointer"
+                    className="group flex flex-col items-center gap-2 rounded-xl border border-white/10 bg-white/5 p-4 text-center transition-all hover:-translate-y-0.5 hover:border-white/25 hover:bg-white/10 cursor-pointer no-underline"
                   >
                     <span className="text-2xl transition group-hover:scale-110">{tool.icon}</span>
                     <span className="text-xs font-medium text-slate-200">{tool.name}</span>
