@@ -119,7 +119,7 @@ export function DashboardPage() {
   const [role, setRole] = useState('member')
   const [dashboard, setDashboard] = useState<DashboardData | null>(null)
   const [users, setUsers] = useState<UserManagementItem[]>([])
-  const [theme, setTheme] = useState<'dark' | 'light'>('dark')
+  const [theme, setTheme] = useState<'dark' | 'light'>('light')
   const [rejectReasonByUser, setRejectReasonByUser] = useState<Record<string, string>>({})
   const [rejectCustomByUser, setRejectCustomByUser] = useState<Record<string, string>>({})
   const [adminImages, setAdminImages] = useState<MediaImage[]>([])
@@ -327,7 +327,7 @@ export function DashboardPage() {
               修改密码
             </button>
             <button type="button" onClick={handleThemeToggle}>
-              主题：{theme === 'dark' ? '深色' : '首页同款浅色'}
+              主题：{theme === 'dark' ? '深色' : '浅色'}
             </button>
             <button type="button" onClick={handleLogout}>
               退出登录
