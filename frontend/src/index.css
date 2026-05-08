@@ -1316,6 +1316,33 @@ html[data-theme='light'] .user-popover-email {
   color: #94a3b8;
 }
 
+.screen-status {
+  margin-top: 4px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  color: #94a3b8;
+}
+
+.status-dot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #64748b;
+}
+
+.status-dot.on {
+  background: #34d399;
+  box-shadow: 0 0 6px rgba(52, 211, 153, 0.4);
+}
+
+.status-dot.off {
+  background: #f87171;
+  box-shadow: 0 0 6px rgba(248, 113, 113, 0.4);
+}
+
 .screen-grid {
   display: grid;
   grid-template-columns: 30% 40% 30%;
@@ -1352,38 +1379,69 @@ html[data-theme='light'] .user-popover-email {
 
 .core-metrics {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 10px;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 8px;
 }
 
 .core-metrics article {
-  border-radius: 12px;
-  border: 1px solid rgba(148, 163, 184, 0.2);
-  background: linear-gradient(160deg, rgba(15, 23, 42, 0.62), rgba(30, 41, 59, 0.44));
-  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid rgba(148, 163, 184, 0.15);
+  background: linear-gradient(160deg, rgba(15, 23, 42, 0.55), rgba(30, 41, 59, 0.35));
+  padding: 8px 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
   transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.core-metrics article::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(125, 211, 252, 0.3), transparent);
+  opacity: 0;
+  transition: opacity 0.3s ease;
 }
 
 .core-metrics article:hover {
-  transform: translateY(-1px);
-  border-color: rgba(125, 211, 252, 0.52);
-  box-shadow: 0 8px 18px rgba(30, 64, 175, 0.2);
+  transform: translateY(-2px);
+  border-color: rgba(125, 211, 252, 0.45);
+  box-shadow: 0 6px 20px rgba(30, 64, 175, 0.25);
+}
+
+.core-metrics article:hover::before {
+  opacity: 1;
 }
 
 .core-metrics h4 {
   margin: 0;
-  font-size: 12px;
-  color: #93c5fd;
+  font-size: 11px;
+  color: #94a3b8;
   font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .core-metrics strong {
   display: block;
-  margin-top: 4px;
-  font-size: 30px;
-  letter-spacing: 0.02em;
+  margin-top: 2px;
+  font-size: 24px;
+  letter-spacing: 0.01em;
   color: #e2e8f0;
   font-variant-numeric: tabular-nums;
+  font-weight: 700;
+  line-height: 1.1;
+}
+
+.core-metrics .metric-sub {
+  margin-top: 1px;
+  font-size: 9px;
+  color: rgba(148, 163, 184, 0.5);
+  white-space: nowrap;
 }
 
 .viz-card {
@@ -1447,10 +1505,10 @@ html[data-theme='light'] .user-popover-email {
 }
 
 .log-marquee {
-  height: 320px;
+  height: 260px;
   overflow: hidden;
   position: relative;
-  mask-image: linear-gradient(180deg, transparent 0%, #000 9%, #000 91%, transparent 100%);
+  mask-image: linear-gradient(180deg, transparent 0%, #000 8%, #000 92%, transparent 100%);
 }
 
 .log-marquee ul {
@@ -1460,14 +1518,18 @@ html[data-theme='light'] .user-popover-email {
   animation: log-scroll 18s linear infinite;
 }
 
+.log-marquee ul:hover {
+  animation-play-state: paused;
+}
+
 .log-marquee li {
-  display: grid;
-  grid-template-columns: 98px 1fr 70px;
-  gap: 8px;
-  border-bottom: 1px dashed rgba(148, 163, 184, 0.2);
-  padding: 8px 0;
-  font-size: 12px;
-  color: #dbe7ff;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.08);
+  padding: 6px 0;
+  font-size: 11px;
+  color: #cbd5e1;
 }
 
 .ratio-list p {
@@ -1536,6 +1598,12 @@ html[data-theme='light'] .user-popover-email {
   }
 }
 
+@media (max-width: 1400px) {
+  .core-metrics {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
 @media (max-width: 1200px) {
   .screen-grid {
     grid-template-columns: 1fr;
@@ -1547,6 +1615,16 @@ html[data-theme='light'] .user-popover-email {
 
   .screen-header h1 {
     font-size: 20px;
+  }
+
+  .core-metrics {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 900px) {
+  .core-metrics {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
 

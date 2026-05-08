@@ -1,6 +1,7 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Canvas, useFrame } from '@react-three/fiber'
+import { Line } from '@react-three/drei'
 import ReactECharts from 'echarts-for-react'
 import type { EChartsOption } from 'echarts'
 import { authApi } from '../services/auth'
@@ -30,18 +31,87 @@ function useCounter(value: number, duration = 500) {
 }
 
 function SparkField() {
-  const [nodes] = useState(() => Array.from({ length: 36 }, () => [Math.random() * 8 - 4, Math.random() * 5 - 2.5, Math.random() * 6 - 3]))
-  const groupRef = useState<{ current: Group | null }>({ current: null })[0]
+  const innerParticles = useMemo(() => Array.from({ length: 48 }, (_, i) => {
+    const angle = (i / 48) * Math.PI * 2
+    const radius = 1.4 + Math.random() * 0.25
+    return { x: Math.cos(angle) * radius, y: (Math.random() - 0.5) * 0.5, z: Math.sin(angle) * radius, size: 0.025 + Math.random() * 0.022, color: i % 3 === 0 ? '#f0abfc' : i % 3 === 1 ? '#7dd3fc' : '#a78bfa' }
+  }), [])
+  const outerParticles = useMemo(() => Array.from({ length: 40 }, (_, i) => {
+    const angle = (i / 40) * Math.PI * 2 + 0.3
+    const radius = 2.2 + Math.random() * 0.4
+    return { x: Math.cos(angle) * radius, y: (Math.random() - 0.5) * 1, z: Math.sin(angle) * radius, size: 0.018 + Math.random() * 0.018, color: '#67e8f9' }
+  }), [])
+  const scattered = useMemo(() => Array.from({ length: 40 }, () => ({
+    x: (Math.random() - 0.5) * 4.5, y: (Math.random() - 0.5) * 3, z: (Math.random() - 0.5) * 3.5,
+    size: 0.012 + Math.random() * 0.018, color: Math.random() > 0.5 ? '#818cf8' : '#38bdf8'
+  })), [])
+  const constellationLines = useMemo(() => {
+    const count = 48
+    const lines: Array<[number, number, number][]> = []
+    for (let i = 0; i < count; i++) {
+      const a = innerParticles[i]
+      const b = innerParticles[(i + 1) % count]
+      const c = innerParticles[(i + 3) % count]
+      if (Math.random() > 0.5) lines.push([[a.x, a.y, a.z], [b.x, b.y, b.z]])
+      if (Math.random() > 0.75) lines.push([[a.x, a.y, a.z], [c.x, c.y, c.z]])
+    }
+    return lines
+  }, [innerParticles])
+
+  const groupRef = useRef<Group>(null)
   useFrame((state) => {
     if (!groupRef.current) return
-    groupRef.current.rotation.y = state.clock.elapsedTime * 0.08
+    const t = state.clock.elapsedTime
+    groupRef.current.rotation.y = t * 0.1
+    groupRef.current.rotation.x = Math.sin(t * 0.25) * 0.05
+    groupRef.current.rotation.z = Math.cos(t * 0.2) * 0.03
   })
+
   return (
-    <group ref={(node) => (groupRef.current = node)}>
-      {nodes.map((item, index) => (
-        <mesh key={index} position={[item[0], item[1], item[2]]}>
-          <sphereGeometry args={[0.035, 10, 10]} />
-          <meshBasicMaterial color={index % 2 ? '#7dd3fc' : '#a78bfa'} />
+    <group ref={groupRef}>
+      {/* Constellation lines */}
+      {constellationLines.map((pts, i) => (
+        <Line key={`cl-${i}`} points={pts} color="#7dd3fc" lineWidth={0.6} transparent opacity={0.18} />
+      ))}
+      {/* Orbital rings */}
+      <mesh rotation={[Math.PI / 2.1, 0, 0]}>
+        <torusGeometry args={[1.5, 0.006, 12, 120]} />
+        <meshBasicMaterial color="#38bdf8" transparent opacity={0.22} />
+      </mesh>
+      <mesh rotation={[Math.PI / 3, Math.PI / 5, 0]}>
+        <torusGeometry args={[1.9, 0.005, 12, 100]} />
+        <meshBasicMaterial color="#818cf8" transparent opacity={0.15} />
+      </mesh>
+      <mesh rotation={[Math.PI / 2.5, -Math.PI / 4, Math.PI / 3]}>
+        <torusGeometry args={[2.3, 0.004, 10, 80]} />
+        <meshBasicMaterial color="#a78bfa" transparent opacity={0.1} />
+      </mesh>
+      {/* Central glowing orb */}
+      <mesh>
+        <sphereGeometry args={[0.1, 32, 32]} />
+        <meshBasicMaterial color="#bae6fd" transparent opacity={0.95} />
+      </mesh>
+      <mesh>
+        <sphereGeometry args={[0.25, 32, 32]} />
+        <meshBasicMaterial color="#7dd3fc" transparent opacity={0.2} />
+      </mesh>
+      {/* Particles */}
+      {innerParticles.map((p, i) => (
+        <mesh key={`i-${i}`} position={[p.x, p.y, p.z]}>
+          <sphereGeometry args={[p.size, 8, 8]} />
+          <meshBasicMaterial color={p.color} transparent opacity={0.9} />
+        </mesh>
+      ))}
+      {outerParticles.map((p, i) => (
+        <mesh key={`o-${i}`} position={[p.x, p.y, p.z]}>
+          <sphereGeometry args={[p.size, 6, 6]} />
+          <meshBasicMaterial color={p.color} transparent opacity={0.55} />
+        </mesh>
+      ))}
+      {scattered.map((p, i) => (
+        <mesh key={`s-${i}`} position={[p.x, p.y, p.z]}>
+          <sphereGeometry args={[p.size, 4, 4]} />
+          <meshBasicMaterial color={p.color} transparent opacity={0.4} />
         </mesh>
       ))}
     </group>
@@ -50,63 +120,91 @@ function SparkField() {
 
 function LineChart({ data }: { data: Array<{ label: string; value: number }> }) {
   const option: EChartsOption = {
-    tooltip: { trigger: 'axis', backgroundColor: 'rgba(15,23,42,0.9)', borderColor: 'rgba(148,163,184,0.2)', textStyle: { color: '#e2e8f0', fontSize: 12 } },
-    grid: { left: 36, right: 16, top: 36, bottom: 24 },
-    xAxis: { type: 'category', data: data.map(d => d.label), axisLabel: { color: '#94a3b8', fontSize: 10 }, axisLine: { lineStyle: { color: 'rgba(148,163,184,0.2)' } } },
-    yAxis: { type: 'value', axisLabel: { color: '#94a3b8', fontSize: 10 }, splitLine: { lineStyle: { color: 'rgba(148,163,184,0.1)' } } },
+    tooltip: { trigger: 'axis', backgroundColor: 'rgba(2,6,23,0.92)', borderColor: 'rgba(56,189,248,0.25)', borderWidth: 1, textStyle: { color: '#e2e8f0', fontSize: 11 }, axisPointer: { type: 'cross', crossStyle: { color: 'rgba(148,163,184,0.3)' } } },
+    grid: { left: 32, right: 20, top: 28, bottom: 20 },
+    xAxis: { type: 'category', data: data.map(d => d.label), axisLabel: { color: '#64748b', fontSize: 10 }, axisLine: { show: false }, axisTick: { show: false } },
+    yAxis: { type: 'value', axisLabel: { color: '#64748b', fontSize: 10 }, splitLine: { lineStyle: { color: 'rgba(148,163,184,0.08)' } } },
     series: [{
-      type: 'line', smooth: true, data: data.map(d => d.value),
-      lineStyle: { color: '#38bdf8', width: 2.5, shadowBlur: 8, shadowColor: 'rgba(56,189,248,0.4)' },
-      areaStyle: { color: { type: 'linear', x: 0, y: 0, x2: 0, y2: 1, colorStops: [{ offset: 0, color: 'rgba(56,189,248,0.3)' }, { offset: 1, color: 'rgba(56,189,248,0.02)' }] } },
-      symbolSize: 0,
+      type: 'line', smooth: true, data: data.map(d => d.value), showSymbol: false,
+      lineStyle: { color: '#38bdf8', width: 2, shadowBlur: 6, shadowColor: 'rgba(56,189,248,0.3)' },
+      areaStyle: { color: { type: 'linear', x: 0, y: 0, x2: 0, y2: 1, colorStops: [{ offset: 0, color: 'rgba(56,189,248,0.25)' }, { offset: 1, color: 'rgba(56,189,248,0.01)' }] } },
       itemStyle: { color: '#38bdf8' },
     }],
+    animationDuration: 800,
+    animationEasing: 'cubicOut',
   }
-  return <div className="viz-card"><h3>📈 日访问趋势</h3><ReactECharts option={option} style={{ height: 180 }} notMerge lazyUpdate /></div>
+  return <div className="viz-card"><h3>📈 日访问趋势</h3><ReactECharts option={option} style={{ height: 170 }} notMerge lazyUpdate /></div>
 }
 
 function BarChart({ data }: { data: Array<{ label: string; value: number }> }) {
-  const sampled = data.filter((_, i) => i % 2 === 0).slice(0, 12)
+  const hours = data.map(d => ({ label: d.label.slice(0, 2), value: d.value }))
   const option: EChartsOption = {
-    tooltip: { trigger: 'axis', backgroundColor: 'rgba(15,23,42,0.9)', borderColor: 'rgba(148,163,184,0.2)', textStyle: { color: '#e2e8f0', fontSize: 12 } },
-    grid: { left: 36, right: 16, top: 36, bottom: 24 },
-    xAxis: { type: 'category', data: sampled.map(d => d.label.slice(0, 2)), axisLabel: { color: '#94a3b8', fontSize: 10 }, axisLine: { lineStyle: { color: 'rgba(148,163,184,0.2)' } } },
-    yAxis: { type: 'value', axisLabel: { color: '#94a3b8', fontSize: 10 }, splitLine: { lineStyle: { color: 'rgba(148,163,184,0.1)' } } },
+    tooltip: { trigger: 'axis', backgroundColor: 'rgba(2,6,23,0.92)', borderColor: 'rgba(129,140,248,0.25)', borderWidth: 1, textStyle: { color: '#e2e8f0', fontSize: 11 } },
+    grid: { left: 28, right: 12, top: 24, bottom: 18 },
+    xAxis: { type: 'category', data: hours.map(d => d.label), axisLabel: { color: '#64748b', fontSize: 9, interval: 3 }, axisLine: { show: false }, axisTick: { show: false } },
+    yAxis: { type: 'value', axisLabel: { color: '#64748b', fontSize: 10 }, splitLine: { lineStyle: { color: 'rgba(148,163,184,0.08)' } } },
     series: [{
-      type: 'bar', data: sampled.map(d => d.value), barWidth: 14,
-      itemStyle: { borderRadius: [6, 6, 0, 0], color: { type: 'linear', x: 0, y: 0, x2: 0, y2: 1, colorStops: [{ offset: 0, color: '#818cf8' }, { offset: 1, color: '#6366f1' }] } },
+      type: 'bar', data: hours.map(d => d.value), barWidth: '70%',
+      itemStyle: { borderRadius: [5, 5, 0, 0], color: { type: 'linear', x: 0, y: 0, x2: 0, y2: 1, colorStops: [{ offset: 0, color: '#a78bfa' }, { offset: 1, color: '#7c3aed' }] } },
+      emphasis: { itemStyle: { color: '#c4b5fd' } },
     }],
+    animationDuration: 600,
+    animationEasing: 'cubicOut',
   }
-  return <div className="viz-card"><h3>📊 时段访问量</h3><ReactECharts option={option} style={{ height: 180 }} notMerge lazyUpdate /></div>
+  return <div className="viz-card"><h3>📊 时段访问量</h3><ReactECharts option={option} style={{ height: 170 }} notMerge lazyUpdate /></div>
+}
+
+function shortName(name: string) {
+  const parts = name.split('-')
+  return parts.length > 2 ? parts.slice(1).join('-') : parts.length > 1 ? parts[parts.length - 1] : name
 }
 
 function GeoMap({ data }: { data: Array<{ name: string; value: number }> }) {
   const sorted = [...data].sort((a, b) => b.value - a.value)
+  const maxVal = sorted[0]?.value ?? 1
+  const chartHeight = Math.max(200, sorted.length * 24 + 30)
   const option: EChartsOption = {
-    tooltip: { trigger: 'axis', backgroundColor: 'rgba(15,23,42,0.9)', borderColor: 'rgba(148,163,184,0.2)', textStyle: { color: '#e2e8f0', fontSize: 12 } },
-    grid: { left: 60, right: 16, top: 8, bottom: 16 },
-    xAxis: { type: 'value', axisLabel: { color: '#94a3b8', fontSize: 10 }, splitLine: { lineStyle: { color: 'rgba(148,163,184,0.1)' } } },
-    yAxis: { type: 'category', data: sorted.map(d => d.name).reverse(), axisLabel: { color: '#94a3b8', fontSize: 10 } },
+    tooltip: { trigger: 'axis', backgroundColor: 'rgba(2,6,23,0.92)', borderColor: 'rgba(6,182,212,0.25)', borderWidth: 1, textStyle: { color: '#e2e8f0', fontSize: 11 }, formatter: (params: any) => `${params[0].name}<br/>访问量：${params[0].value}` },
+    grid: { left: 8, right: 38, top: 6, bottom: 14 },
+    xAxis: { type: 'value', axisLabel: { color: '#64748b', fontSize: 9 }, splitLine: { lineStyle: { color: 'rgba(148,163,184,0.08)' } }, max: maxVal * 1.3 },
+    yAxis: { type: 'category', data: sorted.map(d => shortName(d.name)).reverse(), axisLabel: { color: '#94a3b8', fontSize: 10, width: 68, overflow: 'truncate', ellipsis: '...' }, axisLine: { show: false }, axisTick: { show: false } },
     series: [{
-      type: 'bar', data: sorted.map(d => d.value).reverse(), barWidth: 12,
-      itemStyle: { borderRadius: [0, 6, 6, 0], color: { type: 'linear', x: 0, y: 0, x2: 1, y2: 0, colorStops: [{ offset: 0, color: '#06b6d4' }, { offset: 1, color: '#3b82f6' }] } },
+      type: 'bar', data: sorted.map(d => d.value).reverse(), barWidth: sorted.length > 10 ? 8 : 10,
+      label: { show: true, position: 'right', color: '#94a3b8', fontSize: 9, formatter: '{c}' },
+      itemStyle: { borderRadius: [0, 6, 6, 0], color: { type: 'linear', x: 0, y: 0, x2: 1, y2: 0, colorStops: [{ offset: 0, color: '#06b6d4' }, { offset: 1, color: '#0ea5e9' }] } },
     }],
+    animationDuration: 700,
+    animationEasing: 'cubicOut',
   }
-  return <div className="viz-card"><h3>🗺️ 访客地区分布</h3><ReactECharts option={option} style={{ height: 220 }} notMerge lazyUpdate /></div>
+  return <div className="viz-card"><h3>🗺️ 访客地区分布</h3><ReactECharts option={option} style={{ height: chartHeight }} notMerge lazyUpdate /></div>
 }
 
 function PieChart({ data }: { data: Array<{ name: string; value: number }> }) {
+  const colors = ['#38bdf8', '#818cf8', '#c084fc', '#f472b6', '#fb923c', '#34d399', '#fbbf24', '#f87171', '#2dd4bf', '#e879f9']
+  const { topItems, otherItem } = useMemo(() => {
+    if (data.length <= 8) return { topItems: data, otherItem: null }
+    const sorted = [...data].sort((a, b) => b.value - a.value)
+    const top8 = sorted.slice(0, 8)
+    const otherVal = sorted.slice(8).reduce((s, d) => s + d.value, 0)
+    if (otherVal === 0) return { topItems: top8, otherItem: null }
+    return { topItems: top8, otherItem: { name: '其他地区', value: otherVal } }
+  }, [data])
+  const pieData = otherItem ? [...topItems, otherItem] : topItems
   const option: EChartsOption = {
-    tooltip: { trigger: 'item', backgroundColor: 'rgba(15,23,42,0.9)', borderColor: 'rgba(148,163,184,0.2)', textStyle: { color: '#e2e8f0', fontSize: 12 } },
-    legend: { bottom: 0, textStyle: { color: '#94a3b8', fontSize: 10 } },
+    tooltip: { trigger: 'item', backgroundColor: 'rgba(2,6,23,0.92)', borderColor: 'rgba(148,163,184,0.2)', borderWidth: 1, textStyle: { color: '#e2e8f0', fontSize: 11 }, formatter: (params: any) => `${params.name}<br/>访问量：${params.value}（${params.percent}%）` },
+    legend: { bottom: 0, textStyle: { color: '#94a3b8', fontSize: 9 }, itemWidth: 8, itemHeight: 8, itemGap: 6, formatter: (name: string) => shortName(name).length > 6 ? shortName(name).slice(0, 6) + '…' : shortName(name) },
     series: [{
-      type: 'pie', radius: ['40%', '68%'], center: ['50%', '43%'],
-      label: { color: '#cbd5e1', fontSize: 10 },
-      emphasis: { label: { fontSize: 14, fontWeight: 'bold' }, itemStyle: { shadowBlur: 20, shadowColor: 'rgba(0,0,0,0.4)' } },
-      data: data.map(d => ({ ...d, itemStyle: { borderRadius: 4, borderColor: 'rgba(15,23,42,0.6)', borderWidth: 2 } })),
+      type: 'pie', radius: ['45%', '72%'], center: ['50%', '40%'],
+      label: { color: '#94a3b8', fontSize: 9, formatter: (p: any) => p.percent > 3 ? `${shortName(p.name)}\n${p.percent}%` : '' },
+      labelLine: { show: true, length: 14, length2: 10 },
+      emphasis: { label: { fontSize: 13, fontWeight: 'bold' }, itemStyle: { shadowBlur: 16, shadowColor: 'rgba(0,0,0,0.5)' }, scaleSize: 8 },
+      data: pieData.map((d, i) => ({ ...d, itemStyle: { borderRadius: 6, borderColor: 'rgba(15,23,42,0.5)', borderWidth: 2, color: colors[i % colors.length] } })),
     }],
+    animationType: 'scale',
+    animationEasing: 'elasticOut',
+    animationDelay: (idx: number) => idx * 60,
   }
-  return <div className="viz-card"><h3>🍩 地区占比</h3><ReactECharts option={option} style={{ height: 180 }} notMerge lazyUpdate /></div>
+  return <div className="viz-card"><h3>🍩 地区占比</h3><ReactECharts option={option} style={{ height: 190 }} notMerge lazyUpdate /></div>
 }
 
 export function DashboardPage() {
@@ -300,17 +398,45 @@ export function DashboardPage() {
   const yesterdayVisitors = useCounter(stats?.yesterdaysVisitors ?? 0)
   const onlineVisitors = useCounter(stats?.onlineVisitors ?? 0)
   const avgStay = useCounter(stats?.avgStaySeconds ?? 0)
-  const realtimeLogs = useMemo(() => {
+  const scrollLogs = useMemo(() => {
     const raw = dashboard?.operationLogs ?? []
+    if (raw.length === 0) return []
     return [...raw, ...raw]
   }, [dashboard?.operationLogs])
+
+  const trendPct = useMemo(() => {
+    const t = stats?.todaysVisitors ?? 0
+    const y = stats?.yesterdaysVisitors ?? 0
+    if (y === 0 && t === 0) return null
+    if (y === 0) return { dir: 'up', pct: 100 }
+    const pct = Math.round(((t - y) / y) * 100)
+    return { dir: pct >= 0 ? 'up' : 'down' as 'up' | 'down', pct: Math.abs(pct) }
+  }, [stats?.todaysVisitors, stats?.yesterdaysVisitors])
+
+  const pStatus = dashboard?.projectStatus
+  const uptimeStr = useMemo(() => {
+    const s = pStatus?.uptimeSeconds ?? 0
+    const d = Math.floor(s / 86400)
+    const h = Math.floor((s % 86400) / 3600)
+    const m = Math.floor((s % 3600) / 60)
+    if (d > 0) return `${d}天${h}时${m}分`
+    if (h > 0) return `${h}时${m}分`
+    return `${m}分`
+  }, [pStatus?.uptimeSeconds])
 
   return (
     <main className="screen-page">
       <header className="screen-header">
         <div>
           <h1>网站访问可视化大屏</h1>
-          <p>{clock.toLocaleString()}</p>
+          <div className="screen-status">
+            <span className="status-dot on" />
+            <span>API {pStatus?.serverStatus === 'online' ? '在线' : '离线'}</span>
+            <span className="status-dot on" style={{marginLeft: 8}} />
+            <span>数据库 {pStatus?.dbStatus === 'connected' ? '已连接' : '未连接'}</span>
+            <span style={{marginLeft: 8, color: '#64748b'}}>运行 {uptimeStr}</span>
+            <span style={{marginLeft: 12, color: '#94a3b8'}}>{clock.toLocaleString()}</span>
+          </div>
         </div>
         <div className="user-menu">
           <button className="user-chip" type="button" aria-label="用户菜单">
@@ -347,84 +473,102 @@ export function DashboardPage() {
             </Canvas>
           </div>
           <div className="core-metrics">
-            <article className="group">
-              <h4>👥 总访问人数</h4>
+            <article>
+              <h4>👥 累计访客</h4>
               <strong>{totalVisitors.toLocaleString()}</strong>
-              <span className="text-[10px] text-sky-400/60 mt-1 block">累计注册用户数</span>
+              <span className="metric-sub">历史去重访客总数</span>
             </article>
-            <article className="group">
+            <article>
               <h4>📅 今日访客</h4>
               <strong>{todayVisitors.toLocaleString()}</strong>
-              <span className="text-[10px] text-emerald-400/60 mt-1 block">今日新增访问</span>
+              <span className="metric-sub">
+                今日独立访客数
+                {trendPct && (
+                  <span className={trendPct.dir === 'up' ? 'text-emerald-400 ml-1' : 'text-red-400 ml-1'}>
+                    {trendPct.dir === 'up' ? '↑' : '↓'}{trendPct.pct}%
+                  </span>
+                )}
+              </span>
             </article>
-            <article className="group">
-              <h4>📆 昨日访问</h4>
+            <article>
+              <h4>📆 昨日访客</h4>
               <strong>{yesterdayVisitors.toLocaleString()}</strong>
-              <span className="text-[10px] text-slate-400/60 mt-1 block">昨日访问总量</span>
+              <span className="metric-sub">昨日独立访客数</span>
             </article>
-            <article className="group">
-              <h4>🟢 实时在线</h4>
+            <article>
+              <h4>🟢 在线用户</h4>
               <strong>{onlineVisitors.toLocaleString()}</strong>
-              <span className="text-[10px] text-green-400/60 mt-1 flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />在线中</span>
+              <span className="metric-sub"><span className="inline-block w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse align-middle mr-1" />15分钟内活跃</span>
             </article>
-            <article className="group">
+            <article>
               <h4>⏱️ 平均停留</h4>
               <strong>{avgStay.toLocaleString()}s</strong>
-              <span className="text-[10px] text-amber-400/60 mt-1 block">每次访问时长</span>
+              <span className="metric-sub">页面平均停留时长</span>
             </article>
           </div>
         </section>
         <aside className="screen-right">
           <div className="viz-card">
-            <h3>系统操作日志</h3>
+            <h3>📋 系统操作日志</h3>
             <div className="log-marquee">
               <ul>
-                {realtimeLogs.map((item, index) => (
-                  <li key={`${item.id}-${index}`}>
-                    <span>{item.action}</span>
-                    <span>{item.detail ?? '-'}</span>
-                    <span>{new Date(item.createdAt).toLocaleTimeString()}</span>
-                  </li>
-                ))}
+                {scrollLogs.map((item, i) => {
+                  const isSuccess = item.action.includes('SUCCESS') || item.action.includes('REGISTER')
+                  const isFail = item.action.includes('FAIL') || item.action.includes('FAILED')
+                  const badgeColor = isSuccess ? 'bg-emerald-500/20 text-emerald-300' : isFail ? 'bg-red-500/20 text-red-300' : 'bg-sky-500/20 text-sky-300'
+                  return (
+                    <li key={i}>
+                      <span className={`shrink-0 rounded px-1.5 py-0.5 text-[10px] font-medium ${badgeColor}`}>{item.action}</span>
+                      <span className="truncate">{item.detail ?? '-'}</span>
+                      <span className="shrink-0 text-[10px] text-slate-500 tabular-nums">{new Date(item.createdAt).toLocaleTimeString()}</span>
+                    </li>
+                  )
+                })}
               </ul>
             </div>
           </div>
           <div className="viz-card">
             <h3>📱 访客行为监控</h3>
-            <div className="space-y-4">
+            <div className="space-y-3.5">
               <div>
-                <p className="text-[11px] text-slate-400 mb-2">设备类型</p>
+                <p className="text-[11px] text-slate-400 mb-2.5 flex items-center gap-1.5">💻 设备类型</p>
                 {(dashboard?.behavior.devices ?? []).map((item) => (
-                  <div key={`d-${item.name}`} className="flex items-center gap-2 mb-1.5">
-                    <span className="text-xs text-slate-300 w-16">{item.name}</span>
-                    <div className="flex-1 h-2 rounded-full bg-white/5 overflow-hidden">
-                      <div className="h-full rounded-full bg-gradient-to-r from-sky-400 to-sky-500 transition-all duration-500" style={{ width: `${item.ratio}%` }} />
+                  <div key={`d-${item.name}`} className="flex items-center gap-2 mb-2">
+                    <span className="text-[11px] text-slate-300 w-14 shrink-0">{item.name === 'desktop' ? '桌面端' : item.name === 'mobile' ? '移动端' : item.name}</span>
+                    <div className="flex-1 h-3 rounded-full bg-white/5 overflow-hidden relative">
+                      <div className="h-full rounded-full bg-gradient-to-r from-sky-400 to-cyan-500 transition-all duration-700 relative" style={{ width: `${item.ratio}%` }}>
+                        {item.ratio >= 15 && <span className="absolute inset-0 flex items-center justify-end pr-1.5 text-[9px] text-white/80 font-medium">{item.ratio}%</span>}
+                      </div>
                     </div>
-                    <span className="text-[10px] text-slate-500 w-8 text-right">{item.ratio}%</span>
+                    <span className="text-[10px] text-slate-500 w-12 text-right tabular-nums">{item.value.toLocaleString()} 次</span>
                   </div>
                 ))}
               </div>
               <div>
-                <p className="text-[11px] text-slate-400 mb-2">浏览器</p>
+                <p className="text-[11px] text-slate-400 mb-2.5 flex items-center gap-1.5">🌐 浏览器</p>
                 {(dashboard?.behavior.browsers ?? []).map((item) => (
-                  <div key={`b-${item.name}`} className="flex items-center gap-2 mb-1.5">
-                    <span className="text-xs text-slate-300 w-16">{item.name}</span>
-                    <div className="flex-1 h-2 rounded-full bg-white/5 overflow-hidden">
-                      <div className="h-full rounded-full bg-gradient-to-r from-violet-400 to-purple-500 transition-all duration-500" style={{ width: `${item.ratio}%` }} />
+                  <div key={`b-${item.name}`} className="flex items-center gap-2 mb-2">
+                    <span className="text-[11px] text-slate-300 w-14 shrink-0">{item.name}</span>
+                    <div className="flex-1 h-3 rounded-full bg-white/5 overflow-hidden">
+                      <div className="h-full rounded-full bg-gradient-to-r from-violet-400 to-purple-500 transition-all duration-700 relative" style={{ width: `${item.ratio}%` }}>
+                        {item.ratio >= 15 && <span className="absolute inset-0 flex items-center justify-end pr-1.5 text-[9px] text-white/80 font-medium">{item.ratio}%</span>}
+                      </div>
                     </div>
-                    <span className="text-[10px] text-slate-500 w-8 text-right">{item.ratio}%</span>
+                    <span className="text-[10px] text-slate-500 w-12 text-right tabular-nums">{item.value.toLocaleString()} 次</span>
                   </div>
                 ))}
               </div>
               <div>
-                <p className="text-[11px] text-slate-400 mb-2">流量来源</p>
+                <p className="text-[11px] text-slate-400 mb-2.5 flex items-center gap-1.5">📊 流量来源</p>
                 {(dashboard?.behavior.sources ?? []).map((item) => (
-                  <div key={`s-${item.name}`} className="flex items-center gap-2 mb-1.5">
-                    <span className="text-xs text-slate-300 w-16">{item.name}</span>
-                    <div className="flex-1 h-2 rounded-full bg-white/5 overflow-hidden">
-                      <div className="h-full rounded-full bg-gradient-to-r from-amber-400 to-orange-500 transition-all duration-500" style={{ width: `${item.ratio}%` }} />
+                  <div key={`s-${item.name}`} className="flex items-center gap-2 mb-2">
+                    <span className="text-[11px] text-slate-300 w-14 shrink-0">{item.name === 'direct' ? '直接访问' : item.name}</span>
+                    <div className="flex-1 h-3 rounded-full bg-white/5 overflow-hidden">
+                      <div className="h-full rounded-full bg-gradient-to-r from-amber-400 to-orange-500 transition-all duration-700 relative" style={{ width: `${item.ratio}%` }}>
+                        {item.ratio >= 15 && <span className="absolute inset-0 flex items-center justify-end pr-1.5 text-[9px] text-white/80 font-medium">{item.ratio}%</span>}
+                      </div>
                     </div>
-                    <span className="text-[10px] text-slate-500 w-8 text-right">{item.ratio}%</span>
+                    <span className="text-[10px] text-slate-500 w-12 text-right tabular-nums">{item.value.toLocaleString()} 次</span>
                   </div>
                 ))}
               </div>

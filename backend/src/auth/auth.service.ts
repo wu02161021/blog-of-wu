@@ -256,43 +256,50 @@ export class AuthService {
     );
 
     const nowTs = Date.now();
-    const onlineThreshold = new Date(nowTs - 5 * 60 * 1000);
+    const onlineThreshold = new Date(nowTs - 15 * 60 * 1000);
     const yesterdayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 1);
     const last7DaysStart = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 6);
+
+    const visitEventTypes = ['SITE_ENTER', 'ROUTE_VIEW', 'LOGIN', 'REGISTER'];
 
     const [totalVisitorsRaw, todayVisitorsRaw, yesterdayVisitorsRaw, onlineVisitorsRaw] = await Promise.all([
       this.visitEventRepository
         .createQueryBuilder('event')
         .select('COUNT(DISTINCT event.visitor_id)', 'count')
-        .where('event.event_type IN (:...types)', { types: ['SITE_ENTER', 'ROUTE_VIEW', 'LOGIN', 'REGISTER'] })
+        .where('event.event_type IN (:...types)', { types: visitEventTypes })
         .getRawOne<{ count: string }>(),
       this.visitEventRepository
         .createQueryBuilder('event')
         .select('COUNT(DISTINCT event.visitor_id)', 'count')
-        .where('event.created_at >= :start', { start: startOfToday })
+        .where('event.event_type IN (:...types)', { types: visitEventTypes })
+        .andWhere('event.created_at >= :start', { start: startOfToday })
         .andWhere('event.created_at < :end', { end: endOfToday })
         .getRawOne<{ count: string }>(),
       this.visitEventRepository
         .createQueryBuilder('event')
         .select('COUNT(DISTINCT event.visitor_id)', 'count')
-        .where('event.created_at >= :start', { start: yesterdayStart })
+        .where('event.event_type IN (:...types)', { types: visitEventTypes })
+        .andWhere('event.created_at >= :start', { start: yesterdayStart })
         .andWhere('event.created_at < :end', { end: startOfToday })
         .getRawOne<{ count: string }>(),
       this.visitEventRepository
         .createQueryBuilder('event')
         .select('COUNT(DISTINCT event.visitor_id)', 'count')
-        .where('event.created_at >= :threshold', { threshold: onlineThreshold })
+        .where('event.event_type IN (:...types)', { types: visitEventTypes })
+        .andWhere('event.created_at >= :threshold', { threshold: onlineThreshold })
         .getRawOne<{ count: string }>(),
     ]);
 
+    const visitEventTypeList = "'SITE_ENTER','ROUTE_VIEW','LOGIN','REGISTER'";
+
     const [avgStayRaw] = await this.visitEventRepository.query(
-      'SELECT COALESCE(AVG(duration_seconds), 0) AS avg FROM visit_events WHERE duration_seconds > 0',
+      `SELECT COALESCE(AVG(duration_seconds), 0) AS avg FROM visit_events WHERE duration_seconds > 0 AND event_type IN (${visitEventTypeList})`,
     );
 
     const dailyRows = await this.visitEventRepository.query(
       `SELECT to_char(date_trunc('day', created_at), 'MM-DD') AS day, COUNT(*)::int AS value
        FROM visit_events
-       WHERE created_at >= $1
+       WHERE created_at >= $1 AND event_type IN (${visitEventTypeList})
        GROUP BY date_trunc('day', created_at)
        ORDER BY date_trunc('day', created_at) ASC`,
       [last7DaysStart],
@@ -301,7 +308,7 @@ export class AuthService {
     const hourRows = await this.visitEventRepository.query(
       `SELECT EXTRACT(HOUR FROM created_at)::int AS hour, COUNT(*)::int AS value
        FROM visit_events
-       WHERE created_at >= $1
+       WHERE created_at >= $1 AND event_type IN (${visitEventTypeList})
        GROUP BY EXTRACT(HOUR FROM created_at)
        ORDER BY hour ASC`,
       [startOfToday],
@@ -310,14 +317,16 @@ export class AuthService {
     const regionRows = await this.visitEventRepository.query(
       `SELECT COALESCE(region, '未知') AS name, COUNT(*)::int AS value
        FROM visit_events
+       WHERE event_type IN (${visitEventTypeList})
        GROUP BY COALESCE(region, '未知')
        ORDER BY value DESC
-       LIMIT 6`,
+       LIMIT 15`,
     );
 
     const deviceRows = await this.visitEventRepository.query(
       `SELECT COALESCE(device_type, 'unknown') AS name, COUNT(*)::int AS value
        FROM visit_events
+       WHERE event_type IN (${visitEventTypeList})
        GROUP BY COALESCE(device_type, 'unknown')
        ORDER BY value DESC`,
     );
@@ -325,6 +334,7 @@ export class AuthService {
     const browserRows = await this.visitEventRepository.query(
       `SELECT COALESCE(browser_name, 'unknown') AS name, COUNT(*)::int AS value
        FROM visit_events
+       WHERE event_type IN (${visitEventTypeList})
        GROUP BY COALESCE(browser_name, 'unknown')
        ORDER BY value DESC
        LIMIT 6`,
@@ -333,6 +343,7 @@ export class AuthService {
     const sourceRows = await this.visitEventRepository.query(
       `SELECT COALESCE(source, 'direct') AS name, COUNT(*)::int AS value
        FROM visit_events
+       WHERE event_type IN (${visitEventTypeList})
        GROUP BY COALESCE(source, 'direct')
        ORDER BY value DESC
        LIMIT 6`,
